@@ -33,18 +33,16 @@ Also the option only to keep the largest piece can be selected or to split a mes
 }
 \examples{
 
-require(rgl)
 data(humface)
 cleanface <- vcgIsolated(humface)
 
 
 }
-\author{
-Stefan Schlager
-}
 \seealso{
 \code{\link{vcgPlyRead}}
 }
+\author{
+Stefan Schlager
+}
 \keyword{~kwd1}
 \keyword{~kwd2}
-
