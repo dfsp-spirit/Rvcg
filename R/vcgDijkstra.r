@@ -24,6 +24,15 @@ vcgDijkstra <- function(x, vertpointer) {
 }
 
 
+#' @export
+vcgGeodesicNeigh <- function(x, dist) {
+    vb <- x$vb
+    it <- x$it-1
+    out <- .Call("Rgeodesicneigh",vb,it,dist)
+    return(out)
+}
+
+
 #' @title Compute pseudo-geodesic distance between two points on a mesh
 #' @param x triangular mesh of class \code{mesh3d}
 #' @param pt1 3D coordinate on mesh or index of vertex
