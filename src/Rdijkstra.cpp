@@ -12,7 +12,6 @@ RcppExport SEXP Rdijkstra(SEXP vb_, SEXP it_, SEXP verts_)
     // Declare Mesh and helper variables
     IntegerVector verts(verts_);
     int n = verts.length();
-    int i, rem;
     MyMesh m;
     VertexIterator vi;
     FaceIterator fi;
@@ -56,7 +55,6 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
 {
   try {
     // Declare Mesh and helper variables
-    int i, rem;
     MyMesh m;
     VertexIterator vi;
     FaceIterator fi;
@@ -74,7 +72,7 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
     for (int cur_vert=0; cur_vert < m.vn; cur_vert++) {
       // Prepare seed vector with single vertex.
       std::vector<MyVertex*> seedVec;
-      vi = m.vert.begin()+verts[cur_vert];
+      vi = m.vert.begin()+cur_vert;
       seedVec.push_back(&*vi);
 
 
@@ -92,6 +90,51 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
       all_neighborhoods.push_back(cur_neighborhood);
     }
     return wrap(all_neighborhoods);
+
+  } catch (std::exception& e) {
+    ::Rf_error( e.what());
+    return wrap(1);
+  } catch (...) {
+    ::Rf_error("unknown exception");
+  }
+}
+
+// Compute mean geodesic dist to all others for each vertex.
+RcppExport SEXP Rgoedesicmeandist(SEXP vb_, SEXP it_)
+{
+  try {
+    // Declare Mesh and helper variables
+    MyMesh m;
+    VertexIterator vi;
+    FaceIterator fi;
+
+    // Allocate mesh and fill it
+    Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
+    m.vert.EnableVFAdjacency();
+    m.vert.EnableQuality();
+    m.face.EnableFFAdjacency();
+    m.face.EnableVFAdjacency();
+    tri::UpdateTopology<MyMesh>::VertexFace(m);
+
+    std::vector<float> meangeodist;
+    for (int cur_vert=0; cur_vert < m.vn; cur_vert++) {
+      // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
+      tri::EuclideanDistance<MyMesh> ed;
+
+      std::vector<MyVertex*> seedVec;
+      vi = m.vert.begin()+cur_vert;
+      seedVec.push_back(&*vi);
+
+      tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed);
+      double sumdist = 0.0;
+      vi=m.vert.begin();
+      for (int i=0; i < m.vn; i++) {
+        sumdist += (vi->Q() / m.vn);
+        ++vi;
+      }
+      meangeodist.push_back(sumdist);
+    }
+    return wrap(meangeodist);
 
   } catch (std::exception& e) {
     ::Rf_error( e.what());

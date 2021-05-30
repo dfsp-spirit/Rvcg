@@ -32,6 +32,14 @@ vcgGeodesicNeigh <- function(x, dist) {
     return(out)
 }
 
+#' @export
+vcgGeodesicMeanDist <- function(x) {
+    vb <- x$vb
+    it <- x$it-1
+    out <- .Call("Rgeodesicmeandist",vb,it)
+    return(out)
+}
+
 
 #' @title Compute pseudo-geodesic distance between two points on a mesh
 #' @param x triangular mesh of class \code{mesh3d}
