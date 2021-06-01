@@ -100,7 +100,7 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
 }
 
 // Compute mean geodesic dist to all others for each vertex.
-RcppExport SEXP Rgoedesicmeandist(SEXP vb_, SEXP it_)
+RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_)
 {
   try {
     // Declare Mesh and helper variables
