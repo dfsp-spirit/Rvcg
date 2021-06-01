@@ -30,7 +30,7 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @param dist double, a single scalar defining the max geodesic distance for the neighborhood.
 #'
-#' @return list of integer vectors, the neighbors.
+#' @return list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
 #'
 #' @examples
 #' \dontrun{
@@ -56,7 +56,7 @@ vcgGeodesicNeigh <- function(x, dist) {
 #'
 #' @inheritParams vcgDijkstra
 #'
-#' @return vector of doubles, the mean geodesic distances
+#' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
 #'
 #' @examples
 #' \dontrun {

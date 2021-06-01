@@ -10,7 +10,7 @@ vcgGeodesicMeanDist(x)
 \item{x}{triangular mesh of class \code{mesh3d}}
 }
 \value{
-vector of doubles, the mean geodesic distances
+vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
 }
 \description{
 Compute, for each mesh vertex, the mean geodesic distance to all other vertices.

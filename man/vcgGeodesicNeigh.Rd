@@ -12,7 +12,7 @@ vcgGeodesicNeigh(x, dist)
 \item{dist}{double, a single scalar defining the max geodesic distance for the neighborhood.}
 }
 \value{
-list of integer vectors, the neighbors.
+list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
 }
 \description{
 Compute, for each mesh vertex, all neighbors within a given geodesic distance.
