@@ -26,7 +26,7 @@ vcgDijkstra <- function(x, vertpointer) {
 
 #' @title Compute, for each mesh vertex, all neighbors within a given geodesic distance.
 #'
-#' @param x a tmesh3d instance, see \code{rgl::tmesh3d}.
+#' @inheritParams vcgDijkstra
 #'
 #' @param dist double, a single scalar defining the max geodesic distance for the neighborhood.
 #'
@@ -37,7 +37,7 @@ vcgDijkstra <- function(x, vertpointer) {
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
 #'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
-#'   tm = fsbrain:::ensure.tmesh3d(sf);
+#'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
 #'   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
 #'     verts_lh = neigh[[638]]); # show vertex 638 neighborhood
@@ -54,7 +54,7 @@ vcgGeodesicNeigh <- function(x, dist) {
 
 #' @title Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 #'
-#' @inheritParams vcgGeodesicNeigh
+#' @inheritParams vcgDijkstra
 #'
 #' @return vector of doubles, the mean geodesic distances
 #'
@@ -63,7 +63,7 @@ vcgGeodesicNeigh <- function(x, dist) {
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
 #'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
-#'   tm = fsbrain:::ensure.tmesh3d(sf);
+#'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   md = Rvcg::vcgGeodesicMeanDist(tm);
 #'   fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
 #' }

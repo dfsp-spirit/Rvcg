@@ -7,7 +7,7 @@
 vcgGeodesicNeigh(x, dist)
 }
 \arguments{
-\item{x}{a tmesh3d instance, see \code{rgl::tmesh3d}.}
+\item{x}{triangular mesh of class \code{mesh3d}}
 
 \item{dist}{double, a single scalar defining the max geodesic distance for the neighborhood.}
 }
@@ -22,7 +22,7 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
-  tm = fsbrain:::ensure.tmesh3d(sf);
+  tm = fsbrain::fs.surface.to.tmesh3d(sf);
   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
     verts_lh = neigh[[638]]); # show vertex 638 neighborhood

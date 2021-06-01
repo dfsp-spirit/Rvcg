@@ -7,7 +7,7 @@
 vcgGeodesicMeanDist(x)
 }
 \arguments{
-\item{x}{a tmesh3d instance, see \code{rgl::tmesh3d}.}
+\item{x}{triangular mesh of class \code{mesh3d}}
 }
 \value{
 vector of doubles, the mean geodesic distances
@@ -20,7 +20,7 @@ Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
-  tm = fsbrain:::ensure.tmesh3d(sf);
+  tm = fsbrain::fs.surface.to.tmesh3d(sf);
   md = Rvcg::vcgGeodesicMeanDist(tm);
   fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
 }
