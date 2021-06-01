@@ -45,10 +45,10 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @export
 vcgGeodesicNeigh <- function(x, dist) {
-    vb <- x$vb
-    it <- x$it-1
-    out <- .Call("Rgeodesicneigh",vb,it,dist)
-    return(out)
+    vb <- x$vb;
+    it <- x$it - 1L;
+    out <- .Call("Rgeodesicneigh", vb, it, dist);
+    return(out);
 }
 
 
@@ -70,10 +70,10 @@ vcgGeodesicNeigh <- function(x, dist) {
 #'
 #' @export
 vcgGeodesicMeanDist <- function(x) {
-    vb <- x$vb
-    it <- x$it-1
-    out <- .Call("Rgeodesicmeandist",vb,it)
-    return(out)
+    vb <- x$vb;
+    it <- x$it - 1L;
+    out <- .Call("Rgeodesicmeandist", vb, it);
+    return(out);
 }
 
 
