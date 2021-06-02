@@ -16,7 +16,7 @@ vector of doubles, the mean geodesic distances. The length of the vector equals 
 Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 }
 \examples{
-\dontrun {
+\dontrun{
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
   sf = subject.surface(sjd, "fsaverage3", "white", "lh");

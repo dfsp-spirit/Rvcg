@@ -59,7 +59,7 @@ vcgGeodesicNeigh <- function(x, dist) {
 #' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
 #'
 #' @examples
-#' \dontrun {
+#' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
 #'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
