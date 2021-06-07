@@ -11,7 +11,7 @@ vcgGeodesicNeigh(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2]))
 
 \item{dist}{double, a single scalar defining the max geodesic distance for the neighborhood.}
 
-\item{ignore_mask}{logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored.}
+\item{ignore_mask}{logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored. Keep in mind that ignoring vertices may lead to a neighborhood consisting of several isolated patches.}
 }
 \value{
 list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
@@ -24,8 +24,9 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
+  mask = fsbrain::subject.mask(sjd, "fsaverage3", hemi = "lh", invert_mask = FALSE);
   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-  neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
+  neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
     verts_lh = neigh[[638]]); # show vertex 638 neighborhood
 }

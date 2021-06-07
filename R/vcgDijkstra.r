@@ -30,7 +30,7 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @param dist double, a single scalar defining the max geodesic distance for the neighborhood.
 #'
-#' @param ignore_mask logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored.
+#' @param ignore_mask logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored. Keep in mind that ignoring vertices may lead to a neighborhood consisting of several isolated patches.
 #'
 #' @return list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
 #'
@@ -39,8 +39,9 @@ vcgDijkstra <- function(x, vertpointer) {
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
 #'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   mask = fsbrain::subject.mask(sjd, "fsaverage3", hemi = "lh", invert_mask = FALSE);
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-#'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
+#'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
 #'   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
 #'     verts_lh = neigh[[638]]); # show vertex 638 neighborhood
 #' }
@@ -62,15 +63,16 @@ vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
 #'
 #' @inheritParams vcgGeodesicNeigh
 #'
-#' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
+#' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh. Ignored vertices will have an \code{NA} value.
 #'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
 #'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   mask = fsbrain::subject.mask(sjd, "fsaverage3", hemi = "lh", invert_mask = FALSE);
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-#'   md = Rvcg::vcgGeodesicMeanDist(tm);
+#'   md = Rvcg::vcgGeodesicMeanDist(tm, ignore_mask = mask);
 #'   fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
 #' }
 #'
@@ -83,6 +85,7 @@ vcgGeodesicMeanDist <- function(x, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
     vb <- x$vb;
     it <- x$it - 1L;
     out <- .Call("Rgeodesicmeandist", vb, it, ignore_mask);
+    out[out < 0] = NA;
     return(out);
 }
 
