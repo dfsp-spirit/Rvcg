@@ -30,13 +30,15 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @param dist double, a single scalar defining the max geodesic distance for the neighborhood.
 #'
+#' @param ignore_mask logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored.
+#'
 #' @return list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
 #'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
-#'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
 #'   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
@@ -44,17 +46,21 @@ vcgDijkstra <- function(x, vertpointer) {
 #' }
 #'
 #' @export
-vcgGeodesicNeigh <- function(x, dist) {
+vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
+    ignore_mask = as.integer(ignore_mask);
+    if(length(ignore_mask) != dim(x$vb)[2]) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), dim(x$vb)[2]));
+    }
     vb <- x$vb;
     it <- x$it - 1L;
-    out <- .Call("Rgeodesicneigh", vb, it, dist);
+    out <- .Call("Rgeodesicneigh", vb, it, dist, ignore_mask);
     return(out);
 }
 
 
 #' @title Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 #'
-#' @inheritParams vcgDijkstra
+#' @inheritParams vcgGeodesicNeigh
 #'
 #' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
 #'
@@ -69,10 +75,14 @@ vcgGeodesicNeigh <- function(x, dist) {
 #' }
 #'
 #' @export
-vcgGeodesicMeanDist <- function(x) {
+vcgGeodesicMeanDist <- function(x, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
+    ignore_mask = as.integer(ignore_mask);
+    if(length(ignore_mask) != dim(x$vb)[2]) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), dim(x$vb)[2]));
+    }
     vb <- x$vb;
     it <- x$it - 1L;
-    out <- .Call("Rgeodesicmeandist", vb, it);
+    out <- .Call("Rgeodesicmeandist", vb, it, ignore_mask);
     return(out);
 }
 

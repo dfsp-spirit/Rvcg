@@ -4,12 +4,14 @@
 \alias{vcgGeodesicNeigh}
 \title{Compute, for each mesh vertex, all neighbors within a given geodesic distance.}
 \usage{
-vcgGeodesicNeigh(x, dist)
+vcgGeodesicNeigh(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2]))
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
 
 \item{dist}{double, a single scalar defining the max geodesic distance for the neighborhood.}
+
+\item{ignore_mask}{logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored.}
 }
 \value{
 list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
@@ -21,7 +23,7 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
 \dontrun{
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
-  sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+  sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
   tm = fsbrain::fs.surface.to.tmesh3d(sf);
   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",

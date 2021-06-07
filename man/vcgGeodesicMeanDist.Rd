@@ -4,10 +4,12 @@
 \alias{vcgGeodesicMeanDist}
 \title{Compute, for each mesh vertex, the mean geodesic distance to all other vertices.}
 \usage{
-vcgGeodesicMeanDist(x)
+vcgGeodesicMeanDist(x, ignore_mask = rep(FALSE, dim(x$vb)[2]))
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
+
+\item{ignore_mask}{logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored.}
 }
 \value{
 vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
