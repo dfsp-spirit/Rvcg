@@ -49,8 +49,12 @@ vcgDijkstra <- function(x, vertpointer) {
 #' @export
 vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
     ignore_mask = as.integer(ignore_mask);
-    if(length(ignore_mask) != dim(x$vb)[2]) {
-        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), dim(x$vb)[2]));
+    num_verts = dim(x$vb)[2];
+    if(length(ignore_mask) != num_verts) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
+    }
+    if(sum(ignore_mask) == num_verts) {
+        stop("Cannot ignore all verices.");
     }
     vb <- x$vb;
     it <- x$it - 1L;
@@ -79,8 +83,12 @@ vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
 #' @export
 vcgGeodesicMeanDist <- function(x, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
     ignore_mask = as.integer(ignore_mask);
-    if(length(ignore_mask) != dim(x$vb)[2]) {
-        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), dim(x$vb)[2]));
+    num_verts = dim(x$vb)[2];
+    if(length(ignore_mask) != num_verts) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
+    }
+    if(sum(ignore_mask) == num_verts) {
+        stop("Cannot ignore all verices.");
     }
     vb <- x$vb;
     it <- x$it - 1L;
