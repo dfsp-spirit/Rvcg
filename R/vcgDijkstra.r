@@ -48,7 +48,10 @@ vcgDijkstra <- function(x, vertpointer) {
 #' }
 #'
 #' @export
-vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
+vcgGeodesicNeigh <- function(x, dist, ignore_mask = NULL) {
+    if(is.null(ignore_mask)) {
+      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+    }
     ignore_mask = as.integer(ignore_mask);
     num_verts = dim(x$vb)[2];
     if(length(ignore_mask) != num_verts) {
@@ -83,7 +86,10 @@ vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
 #' }
 #'
 #' @export
-vcgGeodesicMeanDist <- function(x, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
+vcgGeodesicMeanDist <- function(x, ignore_mask = NULL) {
+    if(is.null(ignore_mask)) {
+      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+    }
     ignore_mask = as.integer(ignore_mask);
     num_verts = dim(x$vb)[2];
     if(length(ignore_mask) != num_verts) {
