@@ -23,12 +23,13 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
 \dontrun{
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
-  sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
-  mask = fsbrain::subject.mask(sjd, "fsaverage3", hemi = "lh", invert_mask = FALSE);
+  sj = "fsaverage3";
+  sf = fsbrain::subject.surface(sjd, sj, "white", "lh");
+  mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
   tm = fsbrain::fs.surface.to.tmesh3d(sf);
   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
-  fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
-    verts_lh = neigh[[638]]); # show vertex 638 neighborhood
+  fsbrain::highlight.vertices.on.subject(sjd, sj,
+    verts_lh = neigh[[500]]); # show vertex 638 neighborhood
 }
 
 }
