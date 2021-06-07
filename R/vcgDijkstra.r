@@ -54,7 +54,7 @@ vcgGeodesicNeigh <- function(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
         stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
     }
     if(sum(ignore_mask) == num_verts) {
-        stop("Cannot ignore all verices.");
+        stop("Cannot ignore all vertices.");
     }
     vb <- x$vb;
     it <- x$it - 1L;
@@ -88,7 +88,7 @@ vcgGeodesicMeanDist <- function(x, ignore_mask = rep(FALSE, dim(x$vb)[2])) {
         stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
     }
     if(sum(ignore_mask) == num_verts) {
-        stop("Cannot ignore all verices.");
+        stop("Cannot ignore all vertices.");
     }
     vb <- x$vb;
     it <- x$it - 1L;
