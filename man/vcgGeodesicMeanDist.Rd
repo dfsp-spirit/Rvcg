@@ -4,7 +4,7 @@
 \alias{vcgGeodesicMeanDist}
 \title{Compute, for each mesh vertex, the mean geodesic distance to all other vertices.}
 \usage{
-vcgGeodesicMeanDist(x, ignore_mask = rep(FALSE, dim(x$vb)[2]))
+vcgGeodesicMeanDist(x, ignore_mask = NULL)
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}

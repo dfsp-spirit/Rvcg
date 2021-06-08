@@ -4,7 +4,7 @@
 \alias{vcgGeodesicNeigh}
 \title{Compute, for each mesh vertex, all neighbors within a given geodesic distance.}
 \usage{
-vcgGeodesicNeigh(x, dist, ignore_mask = rep(FALSE, dim(x$vb)[2]))
+vcgGeodesicNeigh(x, dist, ignore_mask = NULL)
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
