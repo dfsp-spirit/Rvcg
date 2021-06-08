@@ -24,6 +24,46 @@ vcgDijkstra <- function(x, vertpointer) {
 }
 
 
+#' @title Compute geodesic neighborhood in parallel via R parallelization.
+#'
+#' @importFrom foreach foreach
+#' @importFrom doParallel %dopar%
+#'
+#' @examples
+#' \dontrun{
+#'   fsbrain::download_fsaverage3(TRUE);
+#'   sjd = fsbrain::fsaverage.path();
+#'   sj = "fsaverage3";
+#'   sf = fsbrain::subject.surface(sjd, sj, "white", "lh");
+#'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
+#'   md = vcgDijkstraGeodesicMeanDistPar(tm);
+#'   fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
+#' }
+#'
+#' @export
+vcgDijkstraGeodesicMeanDistPar <- function(x) {
+  vb <- x$vb;
+  it <- x$it - 1L;
+  num_verts = dim(x$vb)[2];
+
+
+  res_list <- foreach(i=0:(num_verts-1L), .combine=c) %dopar% {
+    return(mean(.Call("Rdijkstra",vb,it,i)));
+  };
+  return(unlist(res_list));
+}
+
+# stupid test function
+#coordmean <- function(sf, idx) {
+#  return(mean(sf$vertices[idx, ]))
+#}
+#
+#res = foreach::foreach(1=i:nrow(sf$vertices), combine=c) %dopar% {
+#  return(coordmean(sf, i))
+#}
+#unlist(res)
+
+
 #' @title Compute, for each mesh vertex, all neighbors within a given geodesic distance.
 #'
 #' @inheritParams vcgDijkstra
@@ -49,11 +89,12 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @export
 vcgGeodesicNeigh <- function(x, dist, ignore_mask = NULL) {
+    num_verts = dim(x$vb)[2];
     if(is.null(ignore_mask)) {
-      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+      ignore_mask = rep(FALSE, num_verts);
     }
     ignore_mask = as.integer(ignore_mask);
-    num_verts = dim(x$vb)[2];
+
     if(length(ignore_mask) != num_verts) {
         stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
     }
@@ -87,11 +128,11 @@ vcgGeodesicNeigh <- function(x, dist, ignore_mask = NULL) {
 #'
 #' @export
 vcgGeodesicMeanDist <- function(x, ignore_mask = NULL) {
+    num_verts = dim(x$vb)[2];
     if(is.null(ignore_mask)) {
-      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+      ignore_mask = rep(FALSE, num_verts);
     }
     ignore_mask = as.integer(ignore_mask);
-    num_verts = dim(x$vb)[2];
     if(length(ignore_mask) != num_verts) {
         stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
     }
