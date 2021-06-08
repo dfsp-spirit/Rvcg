@@ -26,9 +26,6 @@ vcgDijkstra <- function(x, vertpointer) {
 
 #' @title Compute geodesic neighborhood in parallel via R parallelization.
 #'
-#' @importFrom foreach foreach
-#' @importFrom doParallel %dopar%
-#'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
@@ -42,15 +39,20 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @export
 vcgDijkstraGeodesicMeanDistPar <- function(x) {
-  vb <- x$vb;
-  it <- x$it - 1L;
-  num_verts = dim(x$vb)[2];
+  if(requireNamespace("foreach", quietly = TRUE)) {
+    vb <- x$vb;
+    it <- x$it - 1L;
+    num_verts = dim(x$vb)[2];
 
+    `%dopar%` <- foreach::`%dopar%`
 
-  res_list <- foreach(i=0:(num_verts-1L), .combine=c) %dopar% {
-    return(mean(.Call("Rdijkstra",vb,it,i)));
-  };
-  return(unlist(res_list));
+    res_list <- foreach::foreach(i=0:(num_verts-1L), .combine=c) %dopar% {
+        return(mean(.Call("Rdijkstra",vb,it,i)));
+    };
+    return(unlist(res_list));
+  } else {
+    stop("This functionality requires the 'foreach' package.");
+  }
 }
 
 # stupid test function
