@@ -26,6 +26,10 @@ vcgDijkstra <- function(x, vertpointer) {
 
 #' @title Compute geodesic neighborhood in parallel via R parallelization.
 #'
+#' @inheritParams vcgDijkstra
+#'
+#' @param num_cores scalar positive integer, the number of CPU cores to use. If left at NULL, all cores but one will be used (the default value is \code{max(parallel::detectCores()-1L, 1L)}).
+#'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
@@ -38,22 +42,36 @@ vcgDijkstra <- function(x, vertpointer) {
 #' }
 #'
 #' @export
-vcgDijkstraGeodesicMeanDistPar <- function(x) {
+vcgDijkstraGeodesicMeanDistPar <- function(x, num_cores = NULL) {
   if(requireNamespace("foreach", quietly = TRUE)) {
-    vb <- x$vb;
-    it <- x$it - 1L;
-    num_verts = dim(x$vb)[2];
+    if(requireNamespace("doParallel", quietly = TRUE)) {
+      vb <- x$vb;
+      it <- x$it - 1L;
+      num_verts = dim(x$vb)[2];
 
-    `%dopar%` <- foreach::`%dopar%`
+      `%dopar%` <- foreach::`%dopar%`
 
-    res_list <- foreach::foreach(i=0:(num_verts-1L), .combine=c) %dopar% {
+      if(is.null(num_cores)) {
+          num_cores = max(parallel::detectCores()-1L, 1L);
+      }
+
+      cluster = parallel::makeCluster(num_cores);
+      doParallel::registerDoParallel(cluster);
+
+      res_list <- foreach::foreach(i=0:(num_verts-1L), .combine=c) %dopar% {
         return(mean(.Call("Rdijkstra",vb,it,i)));
-    };
-    return(unlist(res_list));
+      };
+      parallel::stopCluster(cluster);
+      return(unlist(res_list));
+    } else {
+        stop("This functionality requires the 'doParallel' package.");
+    }
   } else {
     stop("This functionality requires the 'foreach' package.");
   }
 }
+
+# microbenchmark::microbenchmark(vcgDijkstraGeodesicMeanDistPar(tm), vcgGeodesicMeanDist(tm))
 
 # stupid test function
 #coordmean <- function(sf, idx) {
@@ -86,7 +104,7 @@ vcgDijkstraGeodesicMeanDistPar <- function(x) {
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
 #'   fsbrain::highlight.vertices.on.subject(sjd, sj,
-#'     verts_lh = neigh[[500]]); # show vertex 638 neighborhood
+#'     verts_lh = neigh[[500]]); # Show vertex 500 neighborhood.
 #' }
 #'
 #' @export

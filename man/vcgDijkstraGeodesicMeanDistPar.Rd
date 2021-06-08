@@ -4,7 +4,12 @@
 \alias{vcgDijkstraGeodesicMeanDistPar}
 \title{Compute geodesic neighborhood in parallel via R parallelization.}
 \usage{
-vcgDijkstraGeodesicMeanDistPar(x)
+vcgDijkstraGeodesicMeanDistPar(x, num_cores = NULL)
+}
+\arguments{
+\item{x}{triangular mesh of class \code{mesh3d}}
+
+\item{num_cores}{scalar positive integer, the number of CPU cores to use. If left at NULL, all cores but one will be used (the default value is \code{max(parallel::detectCores()-1L, 1L)}).}
 }
 \description{
 Compute geodesic neighborhood in parallel via R parallelization.
