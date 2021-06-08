@@ -51,14 +51,16 @@ RcppExport SEXP Rdijkstra(SEXP vb_, SEXP it_, SEXP verts_)
 }
 
 // Compute for each vertex the geodesic neighborhood with radius x, i.e., all vertices which are in geodesic distance <= x.
-RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
+RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_, SEXP ignore_mask_)
 {
   try {
     // Declare Mesh and helper variables
     MyMesh m;
-    VertexIterator vi;
+    VertexIterator vi, vo;
     FaceIterator fi;
     float neighdist = Rcpp::as<float>(neighdist_);
+
+    IntegerVector ignore_mask(ignore_mask_);
 
     // Allocate mesh and fill it
     Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
@@ -77,15 +79,18 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
 
 
       // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
-      tri::EuclideanDistance<MyMesh> ed;
-      tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed);
       std::vector<int> cur_neighborhood;
-      vi=m.vert.begin();
-      for (int i=0; i < m.vn; i++) {
-        if(vi->Q() < neighdist) {
-          cur_neighborhood.push_back(i);
+
+      if(ignore_mask[cur_vert] == 0) { // Only compute for non-ignored vertices. This returns an empty neighborhood for ignored ones.
+        tri::EuclideanDistance<MyMesh> ed;
+        tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed);
+        vo=m.vert.begin();
+        for (int i=0; i < m.vn; i++) {
+          if(vo->Q() < neighdist && ignore_mask[i] == 0) {  // Only add non-ignored vertices to neighborhood.
+            cur_neighborhood.push_back(i);
+          }
+          ++vo;
         }
-        ++vi;
       }
       all_neighborhoods.push_back(cur_neighborhood);
     }
@@ -100,13 +105,22 @@ RcppExport SEXP Rgeodesicneigh(SEXP vb_, SEXP it_, SEXP neighdist_)
 }
 
 // Compute mean geodesic dist to all others for each vertex.
-RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_)
+RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_, SEXP ignore_mask_)
 {
   try {
     // Declare Mesh and helper variables
     MyMesh m;
-    VertexIterator vi;
+    VertexIterator vi, vo;
     FaceIterator fi;
+    IntegerVector ignore_mask(ignore_mask_);
+    int nv = ignore_mask.length();
+
+    int num_non_ignored_verts = 0;
+    for (int i=0; i < nv; i++) {
+      if(ignore_mask[i] == 0) {
+        num_non_ignored_verts += 1;
+      }
+    }
 
     // Allocate mesh and fill it
     Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
@@ -118,21 +132,28 @@ RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_)
 
     std::vector<float> meangeodist;
     for (int cur_vert=0; cur_vert < m.vn; cur_vert++) {
-      // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
-      tri::EuclideanDistance<MyMesh> ed;
 
-      std::vector<MyVertex*> seedVec;
-      vi = m.vert.begin()+cur_vert;
-      seedVec.push_back(&*vi);
+      if(ignore_mask[cur_vert] == 1) { // do not compute mean distance for ignored vertices.
+        meangeodist.push_back(-1);
+      } else {
+        // Compute pseudo-geodesic distance by summing Euclidean dists along shortest path in graph.
+        tri::EuclideanDistance<MyMesh> ed;
 
-      tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed);
-      double sumdist = 0.0;
-      vi=m.vert.begin();
-      for (int i=0; i < m.vn; i++) {
-        sumdist += (vi->Q() / m.vn);
-        ++vi;
+        std::vector<MyVertex*> seedVec;
+        vi = m.vert.begin()+cur_vert;
+        seedVec.push_back(&*vi);
+
+        tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed);
+        double sumdist = 0.0;
+        vo=m.vert.begin();
+        for (int i=0; i < m.vn; i++) {
+          if(ignore_mask[cur_vert] == 0) {
+            sumdist += (vo->Q() / num_non_ignored_verts);
+          }
+          ++vo;
+        }
+        meangeodist.push_back(sumdist);
       }
-      meangeodist.push_back(sumdist);
     }
     return wrap(meangeodist);
 

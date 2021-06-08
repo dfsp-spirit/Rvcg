@@ -4,13 +4,15 @@
 \alias{vcgGeodesicMeanDist}
 \title{Compute, for each mesh vertex, the mean geodesic distance to all other vertices.}
 \usage{
-vcgGeodesicMeanDist(x)
+vcgGeodesicMeanDist(x, ignore_mask = NULL)
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
+
+\item{ignore_mask}{logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored. Keep in mind that ignoring vertices may lead to a neighborhood consisting of several isolated patches.}
 }
 \value{
-vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
+vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh. Ignored vertices will have an \code{NA} value.
 }
 \description{
 Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
@@ -19,10 +21,12 @@ Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 \dontrun{
   fsbrain::download_fsaverage3(TRUE);
   sjd = fsbrain::fsaverage.path();
-  sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+  sj = "fsaverage3";
+  sf = subject.surface(sjd, sj, "white", "lh");
+  mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-  md = Rvcg::vcgGeodesicMeanDist(tm);
-  fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
+  md = Rvcg::vcgGeodesicMeanDist(tm, ignore_mask = mask);
+  fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
 }
 
 }

@@ -30,49 +30,78 @@ vcgDijkstra <- function(x, vertpointer) {
 #'
 #' @param dist double, a single scalar defining the max geodesic distance for the neighborhood.
 #'
+#' @param ignore_mask logical vector of length \code{|V|}, the number of vertices in the mesh. Each position must indicate whether the vertex should be ignored. Keep in mind that ignoring vertices may lead to a neighborhood consisting of several isolated patches.
+#'
 #' @return list of integer vectors, the neighbors. The length of the outer list equals the number of vertices in the mesh.
 #'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
-#'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   sj = "fsaverage3";
+#'   sf = fsbrain::subject.surface(sjd, sj, "white", "lh");
+#'   mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-#'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
-#'   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
-#'     verts_lh = neigh[[638]]); # show vertex 638 neighborhood
+#'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
+#'   fsbrain::highlight.vertices.on.subject(sjd, sj,
+#'     verts_lh = neigh[[500]]); # show vertex 638 neighborhood
 #' }
 #'
 #' @export
-vcgGeodesicNeigh <- function(x, dist) {
+vcgGeodesicNeigh <- function(x, dist, ignore_mask = NULL) {
+    if(is.null(ignore_mask)) {
+      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+    }
+    ignore_mask = as.integer(ignore_mask);
+    num_verts = dim(x$vb)[2];
+    if(length(ignore_mask) != num_verts) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
+    }
+    if(sum(ignore_mask) == num_verts) {
+        stop("Cannot ignore all vertices.");
+    }
     vb <- x$vb;
     it <- x$it - 1L;
-    out <- .Call("Rgeodesicneigh", vb, it, dist);
+    out <- .Call("Rgeodesicneigh", vb, it, dist, ignore_mask);
     return(out);
 }
 
 
 #' @title Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 #'
-#' @inheritParams vcgDijkstra
+#' @inheritParams vcgGeodesicNeigh
 #'
-#' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh.
+#' @return vector of doubles, the mean geodesic distances. The length of the vector equals the number of vertices in the mesh. Ignored vertices will have an \code{NA} value.
 #'
 #' @examples
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
-#'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   sj = "fsaverage3";
+#'   sf = subject.surface(sjd, sj, "white", "lh");
+#'   mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
-#'   md = Rvcg::vcgGeodesicMeanDist(tm);
-#'   fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
+#'   md = Rvcg::vcgGeodesicMeanDist(tm, ignore_mask = mask);
+#'   fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
 #' }
 #'
 #' @export
-vcgGeodesicMeanDist <- function(x) {
+vcgGeodesicMeanDist <- function(x, ignore_mask = NULL) {
+    if(is.null(ignore_mask)) {
+      ignore_mask = rep(FALSE, dim(x$vb)[2]);
+    }
+    ignore_mask = as.integer(ignore_mask);
+    num_verts = dim(x$vb)[2];
+    if(length(ignore_mask) != num_verts) {
+        stop(sprintf("Ignore mask length (%d) must equal vertex count in mesh (%d).\n", length(ignore_mask), num_verts));
+    }
+    if(sum(ignore_mask) == num_verts) {
+        stop("Cannot ignore all vertices.");
+    }
     vb <- x$vb;
     it <- x$it - 1L;
-    out <- .Call("Rgeodesicmeandist", vb, it);
+    out <- .Call("Rgeodesicmeandist", vb, it, ignore_mask);
+    out[out < 0] = NA;
     return(out);
 }
 
