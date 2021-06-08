@@ -143,3 +143,52 @@ RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_)
     ::Rf_error("unknown exception");
   }
 }
+
+
+using namespace RcppParallel;
+
+struct GeoDistToAll : public Worker
+{
+  // source matrix
+  const MyMesh input;
+
+  // destination matrix
+  RVector<double> output;
+
+  // initialize with source and destination
+  GeoDistToAll(const MyMesh m, RVector<double> output)
+    : input(input), output(output) {}
+
+  // take the square root of the range of elements requested
+  void operator()(std::size_t begin, std::size_t end) {
+    VertexIterator vi;
+    FaceIterator fi;
+
+    // Allocate mesh and fill it
+    input.vert.EnableVFAdjacency();
+    input.vert.EnableQuality();
+    input.face.EnableFFAdjacency();
+    input.face.EnableVFAdjacency();
+    tri::UpdateTopology<MyMesh>::VertexFace(input);
+
+
+    for (int cur_vert=begin; cur_vert < end; cur_vert++) {
+      // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
+      tri::EuclideanDistance<MyMesh> ed;
+
+      std::vector<MyVertex*> seedVec;
+      vi = input.vert.begin()+cur_vert;
+      seedVec.push_back(&*vi);
+
+      tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(input,seedVec,ed);
+      double sumdist = 0.0;
+      vi=input.vert.begin();
+      for (int i=0; i < input.vn; i++) {
+        sumdist += (vi->Q() / input.vn);
+        ++vi;
+      }
+      output(cur_vert) = sumdist;
+    }
+
+  }
+};

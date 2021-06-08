@@ -36,7 +36,7 @@ vcgDijkstra <- function(x, vertpointer) {
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
-#'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0);
 #'   fsbrain::highlight.vertices.on.subject(sjd, "fsaverage3",
@@ -62,7 +62,7 @@ vcgGeodesicNeigh <- function(x, dist) {
 #' \dontrun{
 #'   fsbrain::download_fsaverage3(TRUE);
 #'   sjd = fsbrain::fsaverage.path();
-#'   sf = subject.surface(sjd, "fsaverage3", "white", "lh");
+#'   sf = fsbrain::subject.surface(sjd, "fsaverage3", "white", "lh");
 #'   tm = fsbrain::fs.surface.to.tmesh3d(sf);
 #'   md = Rvcg::vcgGeodesicMeanDist(tm);
 #'   fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = md);
@@ -99,3 +99,5 @@ vcgGeodist <- function(x,pt1,pt2) {
     geo <- vcgDijkstra(x,vertpointer = clost$index[1,1])[clost$index[2,1]]
     return(geo)
 }
+
+
