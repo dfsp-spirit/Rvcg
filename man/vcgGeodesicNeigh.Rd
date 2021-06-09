@@ -29,7 +29,7 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
   tm = fsbrain::fs.surface.to.tmesh3d(sf);
   neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
   fsbrain::highlight.vertices.on.subject(sjd, sj,
-    verts_lh = neigh[[500]]); # show vertex 638 neighborhood
+    verts_lh = neigh[[500]]); # Show vertex 500 neighborhood.
 }
 
 }
