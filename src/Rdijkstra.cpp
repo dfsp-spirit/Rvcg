@@ -48,7 +48,7 @@ RcppExport SEXP Rdijkstra(SEXP vb_, SEXP it_, SEXP verts_, SEXP maxdist_)
       geodist.push_back(vi->Q());
       ++vi;
     }
-    //return List::create(geodist, inInterval, sourcesHandle, parentHandle);
+    //return List::create(geodist); // also works
     return wrap(geodist);
 
   } catch (std::exception& e) {
