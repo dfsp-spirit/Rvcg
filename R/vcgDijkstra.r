@@ -2,6 +2,7 @@
 #' @title Compute pseudo-geodesic distances on a triangular mesh
 #' @param x triangular mesh of class \code{mesh3d}
 #' @param vertpointer integer: references indices of vertices on the mesh
+#' @param maxdist double, the maximal distance to travel on the mesh
 #' @return returns a vector of shortest distances for each of the vertices to one of the vertices referenced in \code{vertpointer}
 #' @examples
 #' ## Compute geodesic distance between all mesh vertices and the first vertex of a mesh
@@ -15,11 +16,11 @@
 #' }
 #' @note Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices.
 #' @export
-vcgDijkstra <- function(x, vertpointer) {
+vcgDijkstra <- function(x, vertpointer, maxdist=1e6) {
     vertpointer <- as.integer(vertpointer-1)
     vb <- x$vb
     it <- x$it-1
-    out <- .Call("Rdijkstra",vb,it,vertpointer)
+    out <- .Call("Rdijkstra",vb,it,vertpointer, maxdist)
     return(out)
 }
 
