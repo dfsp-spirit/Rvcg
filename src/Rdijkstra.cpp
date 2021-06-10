@@ -32,9 +32,11 @@ RcppExport SEXP Rdijkstra(SEXP vb_, SEXP it_, SEXP verts_, SEXP maxdist_)
       seedVec.push_back(&*vi);
     }
 
+    std::vector<MyVertex*> *inInterval;
+
     // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
     tri::EuclideanDistance<MyMesh> ed;
-    tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed, maxdist);
+    tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed, maxdist, inInterval);
     std::vector<float> geodist;
     vi=m.vert.begin();
     for (int i=0; i < m.vn; i++) {
