@@ -26,9 +26,13 @@ vcgDijkstra <- function(x, vertpointer) {
 
 #' @title Compute geodesic neighborhood in parallel via R parallelization.
 #'
+#' @description This function is not faster than the single-threaded version for every mesh, it may even be a lot slower. See the note below for details.
+#'
 #' @inheritParams vcgDijkstra
 #'
 #' @param num_cores scalar positive integer, the number of CPU cores to use. If left at NULL, all cores but one will be used (the default value is \code{max(parallel::detectCores()-1L, 1L)}).
+#'
+#' @note You should carefully benchmark this function against the single-threaded \code{vcgGeodesicMeanDist} version for your use case, as this function may be a lot *slower* for small meshes than the single-threaded version due to the parallelization overhead. Whether it is faster or not depends on the number of cores, their speed, but mostly on the mesh size. If your mesh has less than 100k vertices, this function is most likely very slow. The microbenchmark package can help with benchmarking.
 #'
 #' @examples
 #' \dontrun{
