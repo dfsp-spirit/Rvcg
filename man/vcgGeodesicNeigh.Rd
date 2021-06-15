@@ -21,15 +21,16 @@ Compute, for each mesh vertex, all neighbors within a given geodesic distance.
 }
 \examples{
 \dontrun{
-  fsbrain::download_fsaverage3(TRUE);
-  sjd = fsbrain::fsaverage.path();
-  sj = "fsaverage3";
-  sf = fsbrain::subject.surface(sjd, sj, "white", "lh");
-  mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
-  tm = fsbrain::fs.surface.to.tmesh3d(sf);
-  neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
-  fsbrain::highlight.vertices.on.subject(sjd, sj,
-    verts_lh = neigh[[500]]); # Show vertex 500 neighborhood.
+  if(requireNamespace("fsbrain")) {
+    fsbrain::download_fsaverage3(TRUE);
+    sjd = fsbrain::fsaverage.path();
+    sj = "fsaverage3";
+    tm = fsbrain::subject.surface(sjd, sj, "white", "lh", as_tm=T);
+    mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
+    neigh = Rvcg::vcgGeodesicNeigh(tm, 15.0, ignore_mask = mask);
+    fsbrain::highlight.vertices.on.subject(sjd, sj,
+      verts_lh = neigh[[500]]); # Show vertex 500 neighborhood.
+  }
 }
 
 }

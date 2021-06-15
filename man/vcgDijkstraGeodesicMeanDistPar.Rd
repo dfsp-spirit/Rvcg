@@ -12,17 +12,21 @@ vcgDijkstraGeodesicMeanDistPar(x, num_cores = NULL)
 \item{num_cores}{scalar positive integer, the number of CPU cores to use. If left at NULL, all cores but one will be used (the default value is \code{max(parallel::detectCores()-1L, 1L)}).}
 }
 \description{
-Compute geodesic neighborhood in parallel via R parallelization.
+This function is not faster than the single-threaded version for every mesh, it may even be a lot slower. See the note below for details.
+}
+\note{
+You should carefully benchmark this function against the single-threaded \code{vcgGeodesicMeanDist} version for your use case, as this function may be a lot *slower* for small meshes than the single-threaded version due to the parallelization overhead. Whether it is faster or not depends on the number of cores, their speed, but mostly on the mesh size. If your mesh has less than 100k vertices, this function is most likely very slow. The microbenchmark package can help with benchmarking.
 }
 \examples{
 \dontrun{
-  fsbrain::download_fsaverage3(TRUE);
-  sjd = fsbrain::fsaverage.path();
-  sj = "fsaverage3";
-  sf = fsbrain::subject.surface(sjd, sj, "white", "lh");
-  tm = fsbrain::fs.surface.to.tmesh3d(sf);
-  md = vcgDijkstraGeodesicMeanDistPar(tm);
-  fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
+  if(requireNamespace("fsbrain")) {
+    fsbrain::download_fsaverage3(TRUE);
+    sjd = fsbrain::fsaverage.path();
+    sj = "fsaverage3";
+    tm = fsbrain::subject.surface(sjd, sj, "white", "lh", as_tm=T);
+    md = vcgDijkstraGeodesicMeanDistPar(tm);
+    fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
+  }
 }
 
 }

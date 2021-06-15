@@ -4,12 +4,14 @@
 \alias{vcgDijkstra}
 \title{Compute pseudo-geodesic distances on a triangular mesh}
 \usage{
-vcgDijkstra(x, vertpointer)
+vcgDijkstra(x, vertpointer, maxdist = 1e+06)
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
 
 \item{vertpointer}{integer: references indices of vertices on the mesh}
+
+\item{maxdist}{double, the maximal distance to travel on the mesh}
 }
 \value{
 returns a vector of shortest distances for each of the vertices to one of the vertices referenced in \code{vertpointer}

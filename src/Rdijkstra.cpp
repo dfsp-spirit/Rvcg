@@ -2,6 +2,8 @@
 #include "RvcgIO.h"
 #include <RcppArmadillo.h>
 #include<vcg/complex/algorithms/geodesic.h>
+#include <cassert>
+#include <iostream>
 
 using namespace tri;
 using namespace Rcpp;
@@ -51,6 +53,63 @@ RcppExport SEXP Rdijkstra(SEXP vb_, SEXP it_, SEXP verts_, SEXP maxdist_)
     //return List::create(geodist); // also works
     return wrap(geodist);
 
+  } catch (std::exception& e) {
+    ::Rf_error( e.what());
+    return wrap(1);
+  } catch (...) {
+    ::Rf_error("unknown exception");
+  }
+}
+
+RcppExport SEXP RdijkstraPath(SEXP vb_, SEXP it_, SEXP vertsource_, SEXP verttarget_, SEXP maxdist_)
+{
+  try {
+    // Declare Mesh and helper variables
+    IntegerVector verts_source(vertsource_); // contains only 1 vertex index
+    IntegerVector verts_target(verttarget_); // contains only 1 vertex index
+    int n = verts_source.length();
+    assert(n==1);
+    assert(verts_target.length()==1);
+    MyMesh m;
+    VertexIterator vi;
+    FaceIterator fi;
+    double maxdist = as<double>(maxdist_);
+
+    // Allocate mesh and fill it
+    Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
+    m.vert.EnableVFAdjacency();
+    m.vert.EnableQuality();
+    m.face.EnableFFAdjacency();
+    m.face.EnableVFAdjacency();
+    tri::UpdateTopology<MyMesh>::VertexFace(m);
+
+    // Prepare seed vector with a single vertex
+    std::vector<MyVertex*> seedVec;
+    vi = m.vert.begin()+verts_source[0];
+    seedVec.push_back(&*vi);
+
+    std::vector<MyVertex*> *inInterval;
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> sourcesHandle;
+    sourcesHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m,"sources");
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> parentHandle;
+    parentHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m,"parent");
+
+
+    // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
+    tri::EuclideanDistance<MyMesh> ed;
+    tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed, maxdist, inInterval, &sourcesHandle, &parentHandle);
+
+    std::vector<float> geodist;
+    vi=m.vert.begin();
+    for (int i=0; i < m.vn; i++) {
+      geodist.push_back(vi->Q());
+      ++vi;
+    }
+
+    std::vector<int> geopath;
+    // TODO: compute geodesic path
+
+    return List::create(geodist, geopath);
   } catch (std::exception& e) {
     ::Rf_error( e.what());
     return wrap(1);

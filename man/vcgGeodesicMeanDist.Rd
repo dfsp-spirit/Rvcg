@@ -19,14 +19,15 @@ Compute, for each mesh vertex, the mean geodesic distance to all other vertices.
 }
 \examples{
 \dontrun{
-  fsbrain::download_fsaverage3(TRUE);
-  sjd = fsbrain::fsaverage.path();
-  sj = "fsaverage3";
-  sf = subject.surface(sjd, sj, "white", "lh");
-  mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
-  tm = fsbrain::fs.surface.to.tmesh3d(sf);
-  md = Rvcg::vcgGeodesicMeanDist(tm, ignore_mask = mask);
-  fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
+  if(requireNamespace("fsbrain")) {
+    fsbrain::download_fsaverage3(TRUE);
+    sjd = fsbrain::fsaverage.path();
+    sj = "fsaverage3";
+    tm = subject.surface(sjd, sj, "white", "lh", as_tm=T);
+    mask = fsbrain::subject.mask(sjd, sj, hemi = "lh", invert_mask = FALSE);
+    md = Rvcg::vcgGeodesicMeanDist(tm, ignore_mask = mask);
+    fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = md);
+  }
 }
 
 }

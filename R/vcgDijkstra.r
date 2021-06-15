@@ -199,3 +199,47 @@ vcgGeodist <- function(x,pt1,pt2) {
 }
 
 
+#' @title Compute pseudo-geodesic distance and shortest geodesic path between two points on a mesh
+#' @param x triangular mesh of class \code{mesh3d}
+#' @param pt1 3D coordinate on mesh or index of vertex
+#' @param pt2 3D coordinate on mesh or index of vertex
+#' @return returns a list with two entries, first entry is the geodesic distance between \code{pt1} and \code{pt2} and second an integer vector representing the path.
+#' @note Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices closest to these points.
+#' @examples
+#' data(humface)
+#' pt1 <- humface.lm[1,]
+#' pt2 <- humface.lm[5,]
+#' vcgGeodist(humface,pt1,pt2)
+#' @export
+vcgGeodistPath <- function(x,pt1,pt2) {
+  if (length(pt1) == 1)
+    pt1 <- x$vb[1:3,pt1]
+  if (length(pt2) == 1)
+    pt2 <- x$vb[1:3,pt2]
+  mypts <- rbind(pt1,pt2)
+  clost <- vcgKDtree(x,mypts,k=1)
+  vertpointer_source = clost$index[1,1]
+  vertpointer_target = clost$index[2,1]
+  geodlist <- vcgDijkstraPath(x,vertpointer_source = vertpointer_source, vertpointer_target = vertpointer_target, maxdist = 1e6)
+  return(geodlist)
+}
+
+
+#' @title Compute pseudo-geodesic distance and shortest geodesic path between two vertices on a mesh
+#' @param x triangular mesh of class \code{mesh3d}
+#' @param vertpointer_source scalar integer, the source vertex index
+#' @param vertpointer_target scalar integer, the target vertex index
+#' @param maxdist double, the maximal distance to travel on the mesh
+#' @return returns a list of length two, with first entry the path length and second a vector of indices, the path itself.
+#' @examples
+#' @note Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices.
+#' @export
+vcgDijkstraPath <- function(x, vertpointer_source, vertpointer_target, maxdist=1e6) {
+  vertpointer_source <- as.integer(vertpointer_source -1)
+  vertpointer_target <- as.integer(vertpointer_target -1)
+  vb <- x$vb
+  it <- x$it-1
+  out <- .Call("RdijkstraPath",vb,it,vertpointer_source,vertpointer_target, maxdist)
+  return(out)
+}
+
