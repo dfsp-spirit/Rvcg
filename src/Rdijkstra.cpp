@@ -106,8 +106,16 @@ RcppExport SEXP RdijkstraPath(SEXP vb_, SEXP it_, SEXP vertsource_, SEXP verttar
       ++vi;
     }
 
+    int source_vertex_index = verts_source[0];
+    int target_vertex_index = verts_target[0];
     std::vector<int> geopath;
+    //(*vi).P().X()
     // TODO: compute geodesic path
+    //geopath.push_back(*(sourcesHandle[]))
+    std::cout << "Source vertex is " << source_vertex_index << ", target is " << target_vertex_index << "\n";
+    //std::cout << "Length of sourcesHandle: " << sourcesHandle.size() << "\n";
+    //std::cout << "Length of parentHandle: " << parentHandle.size() << "\n";
+    //geopath.push_back(sourcesHandle[target_vertex_index]); // TODO: howto get vertex index from vertex pointer? here we push tje pointer (which is invalid to push to an int array)
 
     return List::create(geodist, geopath);
   } catch (std::exception& e) {
