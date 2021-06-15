@@ -209,7 +209,7 @@ vcgGeodist <- function(x,pt1,pt2) {
 #' data(humface)
 #' pt1 <- humface.lm[1,]
 #' pt2 <- humface.lm[5,]
-#' vcgGeodist(humface,pt1,pt2)
+#' vcgGeodistPath(humface,pt1,pt2)
 #' @export
 vcgGeodistPath <- function(x,pt1,pt2) {
   if (length(pt1) == 1)
