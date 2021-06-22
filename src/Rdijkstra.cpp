@@ -353,6 +353,14 @@ RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
     m.face.EnableVFAdjacency();
     tri::UpdateTopology<MyMesh>::VertexFace(m);
 
+    // Create int vertex indices to return to R.
+    SimpleTempData<MyMesh::VertContainer,int> indices(m.vert);
+    vi = m.vert.begin();
+    for (int i=0; i < m.vn; i++) {
+      indices[vi] = i;
+      ++vi;
+    }
+
     // Prepare seed vector with a single vertex
     std::vector<MyVertex*> seedVec;
     vi = m.vert.begin()+source;
@@ -382,6 +390,7 @@ RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
       path.push_back(current_vertex);
       while(current_vertex != source) {
         MyMesh::VertexPointer parent = parentHandle[current_vertex];
+        int parent_idx = indices[parent];
         int next_vertex = std::distance(m.vert.begin(), parent);
         current_vertex = next_vertex;
       }
