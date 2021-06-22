@@ -241,3 +241,88 @@ RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_, SEXP ignore_mask_)
   }
 }
 
+
+RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
+{
+  try {
+    // Declare Mesh and helper variables
+    int source = Rcpp::as<int>(source_);
+    IntegerVector targets(targets_);
+    MyMesh m;
+    VertexIterator vi;
+    FaceIterator fi;
+    double maxdist = as<double>(maxdist_);
+
+    // Allocate mesh and fill it
+    Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
+    m.vert.EnableVFAdjacency();
+    m.vert.EnableQuality();
+    m.face.EnableFFAdjacency();
+    m.face.EnableVFAdjacency();
+    tri::UpdateTopology<MyMesh>::VertexFace(m);
+
+    // Prepare seed vector with a single vertex
+    std::vector<MyVertex*> seedVec;
+    vi = m.vert.begin()+source;
+    seedVec.push_back(&*vi);
+
+    std::vector<MyVertex*> *inInterval;
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> sourcesHandle;
+    sourcesHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m, "sources");
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> parentHandle;
+    parentHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m, "parent");
+
+    // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
+    tri::EuclideanDistance<MyMesh> ed;
+    tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed, maxdist, inInterval, &sourcesHandle, &parentHandle);
+    std::vector<float> geodist;
+    vi=m.vert.begin();
+    for (int i=0; i < m.vn; i++) {
+      geodist.push_back(vi->Q());
+      ++vi;
+    }
+
+    // Geodesic path computation (the backtracking part of Dijkstra's Algorithm)
+    // !!! See also: https://stackoverflow.com/questions/10667867/argmin-for-vectordouble-in-c
+    //     A comment suggests we can substract iterators from one another to get indices, e.g.,
+    //    "Since you want an index and you are working with vectors, you can then substract the resulting iterator from vec.begin() to get such index."
+    // This way we could use the existing pointers provided by VCGLIB.
+    std::vector<std::vector<int>> paths;
+    for(int i=0; i<targets.size(), ++i) {
+      int target_vertex = targets[i];
+      int current_vertex = target_vertex;
+      std::vector<int> path;
+      path.push_back(current_vertex);
+      std::vector<int> visited;
+      while(current_vertex != source) {
+        visited.push_back(current_vertex);
+        std::vector<int> neigh = mesh.vertex.neighbors(surface, source_vertices = current_vertex)$vertices; // TODO: vertex neighborhood in VCGLIB
+
+        std::vector<int> neigh_unvisited; // Keep only unvisited neighbors and track their distance to source.
+        std::vector<float> neigh_unvisited_dists;
+        for(int neighidx=0; neighidx < neigh.size(), ++neighidx) {
+          int neighvert = neigh[neighidx];
+          if(std::find(neigh.begin(), neigh.end(), neighvert) == neigh.end()) {
+            neigh_unvisited.push_back(neighvert);
+            neigh_unvisited_dists.push_back(geodist[neighvert]);
+          }
+        }
+
+        int closest_to_source = neigh_unvisited[which.min(neigh_source_dists)]; # greedily jump to closest one
+        path.push_back(closest_to_source);
+        current_vertex = closest_to_source;
+      }
+
+      std::reverse(path.begin(), path.end());
+      paths.push_back(path);
+    }
+
+    return List::create(geodist, geopath);
+  } catch (std::exception& e) {
+    ::Rf_error( e.what());
+    return wrap(1);
+  } catch (...) {
+    ::Rf_error("unknown exception");
+  }
+}
+
