@@ -289,8 +289,7 @@ RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
     //    "Since you want an index and you are working with vectors, you can then substract the resulting iterator from vec.begin() to get such index."
     // This way we could use the existing pointers provided by VCGLIB.
     std::vector<std::vector<int>> paths;
-    <std::vector<float> path_lengths;
-    for(int i=0; i<targets.size(), ++i) {
+    for(int i=0; i<targets.size(); ++i) {
       int target_vertex = targets[i];
       int current_vertex = target_vertex;
       std::vector<int> path;
@@ -305,7 +304,7 @@ RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
 
         std::vector<int> neigh_unvisited; // Keep only unvisited neighbors and track their distance to source.
         std::vector<float> neigh_unvisited_dists;
-        for(int neighidx=0; neighidx < neigh.size(), ++neighidx) {
+        for(int neighidx=0; neighidx < neigh.size(); ++neighidx) {
           int neighvert = neigh[neighidx];
           if(std::find(neigh.begin(), neigh.end(), neighvert) == neigh.end()) {
             neigh_unvisited.push_back(neighvert);
@@ -374,13 +373,14 @@ RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
     }
 
     std::vector<std::vector<int>> paths;
-    for(int i=0; i<targets.size(), ++i) {
+    for(int i=0; i<targets.size(); ++i) {
       int target_vertex = targets[i];
       int current_vertex = target_vertex;
       std::vector<int> path;
       path.push_back(current_vertex);
       while(current_vertex != source) {
-        int next_vertex = std::distance(m.vert.begin(), parentHandle[current_vertex]);
+        MyMesh::VertexPointer parent = parentHandle[current_vertex];
+        int next_vertex = std::distance(m.vert.begin(), parent);
         current_vertex = next_vertex;
       }
 
