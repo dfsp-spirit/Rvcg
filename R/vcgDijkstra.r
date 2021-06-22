@@ -245,3 +245,42 @@ vcgDijkstraPath <- function(x, vertpointer_source, vertpointer_target, maxdist=1
   return(out)
 }
 
+
+#' @title Compute geodesic path between vertices on a mesh
+#' @inheritParams vcgGeodistPath
+#' @param x triangular mesh of class \code{mesh3d}
+#' @param vertpointer_source scalar positive integer, the source vertex index
+#' @param vertpointer_targets positive integer vector, the target vertex indices
+#' @return an integer vector representing the paths.
+#' @examples
+#' data(humface)
+#' vcgGeodesicPathA(humface,1,c(5,10))
+#' @export
+vcgGeodesicPathA <- function(x, vertpointer_source, vertpointer_targets, maxdist=1e6) {
+  vertpointer_source <- as.integer(vertpointer_source -1)
+  vertpointer_targets <- as.integer(vertpointer_targets -1)
+  vb <- x$vb
+  it <- x$it-1
+  out <- .Call("RGeodesicPathA",vb,it,vertpointer_source,vertpointer_target, maxdist)
+  return(out)
+}
+
+
+#' @title Compute geodesic path between vertices on a mesh
+#' @inheritParams vcgGeodistPath
+#' @param x triangular mesh of class \code{mesh3d}
+#' @param vertpointer_source scalar positive integer, the source vertex index
+#' @param vertpointer_targets positive integer vector, the target vertex indices
+#' @return an integer vector representing the paths.
+#' @examples
+#' data(humface)
+#' vcgGeodesicPathB(humface,1,c(5,10))
+#' @export
+vcgGeodesicPathB <- function(x, vertpointer_source, vertpointer_targets, maxdist=1e6) {
+  vertpointer_source <- as.integer(vertpointer_source -1)
+  vertpointer_targets <- as.integer(vertpointer_targets -1)
+  vb <- x$vb
+  it <- x$it-1
+  out <- .Call("RGeodesicPathB",vb,it,vertpointer_source,vertpointer_target, maxdist)
+  return(out)
+}

@@ -26,6 +26,9 @@ extern SEXP Rdijkstra(SEXP, SEXP, SEXP, SEXP);
 extern SEXP RdijkstraPath(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP Rgeodesicneigh(SEXP, SEXP, SEXP, SEXP);
 extern SEXP Rgeodesicmeandist(SEXP, SEXP, SEXP);
+extern SEXP RGeodesicPathA(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP RGeodesicPathB(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP Rgeodesicmeandist(SEXP, SEXP, SEXP);
 extern SEXP RDodecahedron(SEXP);
 extern SEXP RgetEdge(SEXP, SEXP, SEXP);
 extern SEXP RHexahedron(SEXP);
@@ -78,6 +81,8 @@ static const R_CallMethodDef CallEntries[] = {
     {"RdijkstraPath",                 (DL_FUNC) &RdijkstraPath,                  5},
     {"Rgeodesicneigh",                (DL_FUNC) &Rgeodesicneigh,                 4},
     {"Rgeodesicmeandist",             (DL_FUNC) &Rgeodesicmeandist,              3},
+    {"RGeodesicPathA",                (DL_FUNC) &RGeodesicPathA,                 5},
+    {"RGeodesicPathB",                (DL_FUNC) &RGeodesicPathB,                 5},
     {"RDodecahedron",                 (DL_FUNC) &RDodecahedron,                  1},
     {"RgetEdge",                      (DL_FUNC) &RgetEdge,                       3},
     {"RHexahedron",                   (DL_FUNC) &RHexahedron,                    1},

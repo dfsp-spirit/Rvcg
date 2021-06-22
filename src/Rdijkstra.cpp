@@ -242,7 +242,8 @@ RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_, SEXP ignore_mask_)
 }
 
 
-RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
+// This version implements our own Dikstra backtracking and uses only the distance vector from VCG.
+RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
 {
   try {
     // Declare Mesh and helper variables
@@ -295,12 +296,12 @@ RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, S
       std::vector<int> path;
       path.push_back(current_vertex);
       std::vector<int> visited;
-      float path_length = 0.0f;
       while(current_vertex != source) {
         visited.push_back(current_vertex);
 
         // TODO: Compute vertex neighborhood in VCGLIB
-        std::vector<int> neigh = mesh.vertex.neighbors(surface, source_vertices = current_vertex)$vertices;
+        //std::vector<int> neigh = mesh.vertex.neighbors(surface, source_vertices = current_vertex)$vertices;
+        std::vector<int> neigh;
 
         std::vector<int> neigh_unvisited; // Keep only unvisited neighbors and track their distance to source.
         std::vector<float> neigh_unvisited_dists;
@@ -312,17 +313,82 @@ RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, S
           }
         }
         int closest_to_source = std::distance(neigh_unvisited.begin(), std::min_element(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end()));
-        path_length += std::min(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end());
         path.push_back(closest_to_source);
         current_vertex = closest_to_source;
       }
 
       std::reverse(path.begin(), path.end());
       paths.push_back(path);
-      path_lengths.push_back(path_length);
     }
 
-    List L = List::create(Named("paths") = paths , _["path_lengths"] = path_lengths, _["geodist"] = geodist);
+    List L = List::create(Named("paths") = paths , _["geodist"] = geodist);
+    return L;
+  } catch (std::exception& e) {
+    ::Rf_error( e.what());
+    return wrap(1);
+  } catch (...) {
+    ::Rf_error("unknown exception");
+  }
+}
+
+
+// This version follows the VCG pointers to create the path.
+RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
+{
+  try {
+    // Declare Mesh and helper variables
+    int source = Rcpp::as<int>(source_);
+    IntegerVector targets(targets_);
+    MyMesh m;
+    VertexIterator vi;
+    FaceIterator fi;
+    double maxdist = as<double>(maxdist_);
+
+    // Allocate mesh and fill it
+    Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
+    m.vert.EnableVFAdjacency();
+    m.vert.EnableQuality();
+    m.face.EnableFFAdjacency();
+    m.face.EnableVFAdjacency();
+    tri::UpdateTopology<MyMesh>::VertexFace(m);
+
+    // Prepare seed vector with a single vertex
+    std::vector<MyVertex*> seedVec;
+    vi = m.vert.begin()+source;
+    seedVec.push_back(&*vi);
+
+    std::vector<MyVertex*> *inInterval;
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> sourcesHandle;
+    sourcesHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m, "sources");
+    typename MyMesh::template PerVertexAttributeHandle<VertexPointer> parentHandle;
+    parentHandle =  tri::Allocator<MyMesh>::AddPerVertexAttribute<MyMesh::VertexPointer> (m, "parent");
+
+    // Compute pseudo-geodesic distance by summing dists along shortest path in graph.
+    tri::EuclideanDistance<MyMesh> ed;
+    tri::Geodesic<MyMesh>::PerVertexDijkstraCompute(m,seedVec,ed, maxdist, inInterval, &sourcesHandle, &parentHandle);
+    std::vector<float> geodist;
+    vi=m.vert.begin();
+    for (int i=0; i < m.vn; i++) {
+      geodist.push_back(vi->Q());
+      ++vi;
+    }
+
+    std::vector<std::vector<int>> paths;
+    for(int i=0; i<targets.size(), ++i) {
+      int target_vertex = targets[i];
+      int current_vertex = target_vertex;
+      std::vector<int> path;
+      path.push_back(current_vertex);
+      while(current_vertex != source) {
+        int next_vertex = std::distance(m.vert.begin(), parentHandle[current_vertex]);
+        current_vertex = next_vertex;
+      }
+
+      std::reverse(path.begin(), path.end());
+      paths.push_back(path);
+    }
+
+    List L = List::create(Named("paths") = paths , _["geodist"] = geodist);
     return L;
   } catch (std::exception& e) {
     ::Rf_error( e.what());
