@@ -288,15 +288,19 @@ RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, S
     //    "Since you want an index and you are working with vectors, you can then substract the resulting iterator from vec.begin() to get such index."
     // This way we could use the existing pointers provided by VCGLIB.
     std::vector<std::vector<int>> paths;
+    <std::vector<float> path_lengths;
     for(int i=0; i<targets.size(), ++i) {
       int target_vertex = targets[i];
       int current_vertex = target_vertex;
       std::vector<int> path;
       path.push_back(current_vertex);
       std::vector<int> visited;
+      float path_length = 0.0f;
       while(current_vertex != source) {
         visited.push_back(current_vertex);
-        std::vector<int> neigh = mesh.vertex.neighbors(surface, source_vertices = current_vertex)$vertices; // TODO: vertex neighborhood in VCGLIB
+
+        // TODO: Compute vertex neighborhood in VCGLIB
+        std::vector<int> neigh = mesh.vertex.neighbors(surface, source_vertices = current_vertex)$vertices;
 
         std::vector<int> neigh_unvisited; // Keep only unvisited neighbors and track their distance to source.
         std::vector<float> neigh_unvisited_dists;
@@ -307,17 +311,19 @@ RcppExport SEXP RGeodesicPath(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, S
             neigh_unvisited_dists.push_back(geodist[neighvert]);
           }
         }
-
-        int closest_to_source = neigh_unvisited[which.min(neigh_source_dists)]; # greedily jump to closest one
+        int closest_to_source = std::distance(neigh_unvisited.begin(), std::min_element(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end()));
+        path_length += std::min(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end());
         path.push_back(closest_to_source);
         current_vertex = closest_to_source;
       }
 
       std::reverse(path.begin(), path.end());
       paths.push_back(path);
+      path_lengths.push_back(path_length);
     }
 
-    return List::create(geodist, geopath);
+    List L = List::create(Named("paths") = paths , _["path_lengths"] = path_lengths, _["geodist"] = geodist);
+    return L;
   } catch (std::exception& e) {
     ::Rf_error( e.what());
     return wrap(1);
