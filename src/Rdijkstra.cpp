@@ -332,6 +332,8 @@ RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
 
 
 // This version follows the VCG pointers to create the path.
+// See RGetEdge.cpp, and in there SimpleTempData<MyMesh::VertContainer,int> indices(m.vert) for a possible
+//  way to get the integer index of a vertex pointer.
 RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
 {
   try {
