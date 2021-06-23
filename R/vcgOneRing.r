@@ -3,9 +3,20 @@
 #'
 #' @param x tmesh3d instance
 #'
-#' @param vi optional, vector of positive vertex indices for which to compute neighborhood, all are used if left at NULL.
+#' @param vi optional, vector of positive vertex indices for which to compute neighborhood, all are used if left at \code{NULL}.
 #'
 #' @return list of integer vectors, the neighborhoods.
+#'
+#' @examples
+#' data(humface)
+#' neighborhoods <- vcgOneRing(humface, numstep=2)
+#' \dontrun{
+#'   if(requireNamespace("fsbrain", quitely=TRUE)) {
+#'   sjd = fsaverage.path(TRUE);
+#'   surface = subject.surface(sjd, 'fsaverage', surface = "white", hemi = "lh");
+#'   neigh = vcgOneRing(fs.surface.to.tmesh3d(surface));
+#'   fsbrain::highlight.vertices.on.subject(sjd, 'fsaverage', verts_lh=neigh[[100]]);
+#' }
 #'
 #' @export
 vcgOneRing <- function(x, vi=NULL, numstep=1L) {

@@ -55,8 +55,6 @@ RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_)
   m.face.EnableFFAdjacency();
   m.face.EnableVFAdjacency();
 
-
-
   Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
   Rcpp::List outlist(m.vn);
   typedef vcg::face::VFIterator<MyFace> VFIterator;
@@ -65,7 +63,6 @@ RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_)
   FaceIterator fi;
   VertexIterator vi;
 
-
   // Create int vertex indices to return to R.
   SimpleTempData<MyMesh::VertContainer,int> indices(m.vert);
   vi = m.vert.begin();
@@ -73,7 +70,6 @@ RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_)
     indices[vi] = i;
     ++vi;
   }
-
 
   // Start neighborhood computation
   std::vector<std::vector<int>> neighborhoods;
