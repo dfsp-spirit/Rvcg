@@ -79,6 +79,7 @@ RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_)
     MyVertex* pqv = &*vi;
     std::vector<MyVertex*> neigh;
     vcg::face::VVExtendedStarVF<MyFace>(pqv, numstep, neigh);
+    //vcg::face::VVStarVF<MyFace>(pqv, neigh);
 
     // Collect indices of vertices.
     std::vector<int> neighidx;

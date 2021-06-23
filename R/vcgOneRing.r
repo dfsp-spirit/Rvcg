@@ -3,29 +3,18 @@
 #'
 #' @param x tmesh3d instance
 #'
-#' @param vi optional, vector of positive vertex indices for which to compute neighborhood, all are used if left at \code{NULL}.
-#'
-#' @return list of integer vectors, the neighborhoods.
+#' @return list of integer vectors, the neighborhoods. Curently this function still returns FACE indices.
 #'
 #' @examples
 #' data(humface)
-#' neighborhoods <- vcgOneRing(humface, numstep=2)
-#' \dontrun{
-#'   if(requireNamespace("fsbrain", quitely=TRUE)) {
-#'   sjd = fsaverage.path(TRUE);
-#'   surface = subject.surface(sjd, 'fsaverage', surface = "white", hemi = "lh");
-#'   neigh = vcgOneRing(fs.surface.to.tmesh3d(surface));
-#'   fsbrain::highlight.vertices.on.subject(sjd, 'fsaverage', verts_lh=neigh[[100]]);
-#' }
+#' neighborhoods <- vcgOneRing(humface)
 #'
 #' @export
-vcgOneRing <- function(x, vi=NULL, numstep=1L) {
-  if(is.null(vi)) {
-    vi = seq(ncol(x$vb));
-  }
-  vi <- as.integer(vi - 1L)
+vcgOneRing <- function(x) {
   vb <- x$vb
   it <- x$it - 1L
-  out <- .Call("RVVadj",vb,it,vi,numstep)
+  out <- .Call("RVFadj",vb,it)
   return(out)
+  # neigh = out
+  # return(unique(as.integer(surface$faces[neigh[[1000]],])))
 }
