@@ -395,6 +395,7 @@ RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
         //int next_vertex = std::distance(m.vert.begin(), parent);
         int next_vertex = indices[parent];
         current_vertex = next_vertex;
+        path.push_back(current_vertex);
       }
 
       std::reverse(path.begin(), path.end());

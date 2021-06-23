@@ -275,6 +275,16 @@ vcgGeodesicPathA <- function(x, vertpointer_source, vertpointer_targets, maxdist
 #' @examples
 #' data(humface)
 #' vcgGeodesicPathB(humface,1,c(5,10))
+#' \dontrun{
+#'   if(requireNamespace("fsbrain", quitely=TRUE)) {
+#'   sjd = fsaverage.path(TRUE);
+#'   surface = subject.surface(sjd, 'fsaverage', surface = "white", hemi = "lh", as_tm=TRUE);
+#'   p = vcgGeodesicPathB(surface, 5, c(10, 20));
+#'   vis.subject.morph.native(sjd, 'fsaverage', 'thickness', views='si');
+#'   vis.path.along.verts(surface$vertices, p$paths[[1]], color="#FF0000");
+#'   vis.path.along.verts(surface$vertices, p$paths[[2]], color="#0000FF");
+#'   }
+#' }
 #' @export
 vcgGeodesicPathB <- function(x, vertpointer_source, vertpointer_targets, maxdist=1e6) {
   vertpointer_source <- as.integer(vertpointer_source -1)
