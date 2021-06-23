@@ -389,13 +389,13 @@ RcppExport SEXP RGeodesicPathB(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
       int target_vertex = targets[i];
       int current_vertex = target_vertex;
       std::vector<int> path;
-      path.push_back(current_vertex);
+      path.push_back(current_vertex + 1);
       while(current_vertex != source) {
         MyMesh::VertexPointer parent = parentHandle[current_vertex];
         //int next_vertex = std::distance(m.vert.begin(), parent);
         int next_vertex = indices[parent];
         current_vertex = next_vertex;
-        path.push_back(current_vertex);
+        path.push_back(current_vertex + 1);
       }
 
       std::reverse(path.begin(), path.end());
