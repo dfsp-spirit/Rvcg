@@ -24,4 +24,14 @@ Compute geodesic path between vertices on a mesh
 \examples{
 data(humface)
 vcgGeodesicPathB(humface,1,c(5,10))
+\dontrun{
+  if(requireNamespace("fsbrain", quitely=TRUE)) {
+  sjd = fsaverage.path(TRUE);
+  surface = subject.surface(sjd, 'fsaverage', surface = "white", hemi = "lh");
+  p = vcgGeodesicPathB(fs.surface.to.tmesh3d(surface), 5, c(10, 20));
+  vis.subject.morph.native(sjd, 'fsaverage', 'thickness', views='si');
+  vis.path.along.verts(surface$vertices, p$paths[[1]], color="#FF0000");
+  vis.path.along.verts(surface$vertices, p$paths[[2]], color="#0000FF");
+  }
+}
 }

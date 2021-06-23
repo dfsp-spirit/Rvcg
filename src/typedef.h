@@ -56,34 +56,35 @@ struct MyUsedTypes: public UsedTypes<Use<MyVertex>::AsVertexType,
   >{};
 
 class MyEdge : public Edge<MyUsedTypes>{};
-class MyVertex  : public Vertex< MyUsedTypes, 
+class MyVertex  : public Vertex< MyUsedTypes,
   vertex::InfoOcf,
-  vertex::Coord3f, 
-  vertex::BitFlags, 
-  vertex::Normal3f, 
+  vertex::Coord3f,
+  vertex::BitFlags,
+  vertex::Normal3f,
   vertex::Mark,
-  vertex::Color4bOcf, 
+  vertex::Color4bOcf,
   vertex::QualityfOcf,
   vertex::VFAdjOcf,
   vertex::CurvaturefOcf,
   vertex::CurvatureDirfOcf,
-  vertex::TexCoordfOcf 
+  vertex::TexCoordfOcf,
+  vertex::VFAdj
   /*vertex::VFAdj,
     vertex::Curvaturef,
     vertex::CurvatureDirf*/
   >{};
-class MyFace: public Face  <MyUsedTypes, 
+class MyFace: public Face  <MyUsedTypes,
   face::InfoOcf,
   face::VertexRef,
   face::BitFlags,
   face::Mark,
-  face::FFAdjOcf, 
+  face::FFAdjOcf,
   face::VFAdjOcf,
   face::WedgeTexCoordfOcf,
   face::Color4bOcf,
   face::QualityfOcf,
   face::Normal3fOcf
-  /*face::FFAdj, 
+  /*face::FFAdj,
     face::VFAdj,*/
   > {};
 

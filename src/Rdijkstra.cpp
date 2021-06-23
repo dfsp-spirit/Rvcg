@@ -243,6 +243,7 @@ RcppExport SEXP Rgeodesicmeandist(SEXP vb_, SEXP it_, SEXP ignore_mask_)
 
 
 // This version implements our own Dikstra backtracking and uses only the distance vector from VCG.
+// THis is NOT ready yet, we need vertex 1-neighborhood computation to use it.
 RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, SEXP maxdist_)
 {
   try {

@@ -8,13 +8,13 @@
 #' @return list of integer vectors, the neighborhoods.
 #'
 #' @export
-vcgOneRing <- function(x, vi=NULL) {
+vcgOneRing <- function(x, vi=NULL, numstep=1L) {
   if(is.null(vi)) {
     vi = seq(ncol(x$vb));
   }
   vi <- as.integer(vi - 1L)
   vb <- x$vb
   it <- x$it - 1L
-  out <- .Call("RVVadj",vb,it,vi)
+  out <- .Call("RVVadj",vb,it,vi,numstep)
   return(out)
 }
