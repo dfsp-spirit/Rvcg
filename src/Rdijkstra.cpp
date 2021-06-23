@@ -311,7 +311,9 @@ RcppExport SEXP RGeodesicPathA(SEXP vb_, SEXP it_, SEXP source_, SEXP targets_, 
             neigh_unvisited_dists.push_back(geodist[neighvert]);
           }
         }
-        int closest_to_source = std::distance(neigh_unvisited.begin(), std::min_element(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end()));
+        //int closest_to_source = std::distance(neigh_unvisited.begin(), std::min_element(neigh_unvisited_dists.begin(), neigh_unvisited_dists.end()));
+        // TODO: fix this, it is for the func to compile only
+        int closest_to_source = 5;
         path.push_back(closest_to_source);
         current_vertex = closest_to_source;
       }

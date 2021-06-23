@@ -2,7 +2,7 @@
 % Please edit documentation in R/vcgDijkstra.r
 \name{vcgDijkstraPath}
 \alias{vcgDijkstraPath}
-\title{Compute pseudo-geodesic distance and shortest geodesic path between two vertices on a mesh}
+\title{Compute geodesic path between two vertices on a mesh}
 \usage{
 vcgDijkstraPath(x, vertpointer_source, vertpointer_target, maxdist = 1e+06)
 }
@@ -13,14 +13,15 @@ vcgDijkstraPath(x, vertpointer_source, vertpointer_target, maxdist = 1e+06)
 
 \item{vertpointer_target}{scalar integer, the target vertex index}
 
-\item{maxdist}{double, the maximal distance to travel on the mesh}
+\item{maxdist}{double, the maximal distance to travel along the mesh edges during distance computation}
 }
 \value{
-returns a list of length two, with first entry the path length and second a vector of indices, the path itself.
+an integer vector representing the path.
 }
 \description{
-Compute pseudo-geodesic distance and shortest geodesic path between two vertices on a mesh
+Compute geodesic path between two vertices on a mesh
 }
-\note{
-Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices.
+\examples{
+data(humface)
+vcgGeodistPath(humface,1,5)
 }

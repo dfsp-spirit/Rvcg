@@ -281,6 +281,6 @@ vcgGeodesicPathB <- function(x, vertpointer_source, vertpointer_targets, maxdist
   vertpointer_targets <- as.integer(vertpointer_targets -1)
   vb <- x$vb
   it <- x$it-1
-  out <- .Call("RGeodesicPathB",vb,it,vertpointer_source,vertpointer_target, maxdist)
+  out <- .Call("RGeodesicPathB",vb,it,vertpointer_source,vertpointer_targets, maxdist)
   return(out)
 }

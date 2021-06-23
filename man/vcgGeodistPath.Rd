@@ -2,9 +2,9 @@
 % Please edit documentation in R/vcgDijkstra.r
 \name{vcgGeodistPath}
 \alias{vcgGeodistPath}
-\title{Compute pseudo-geodesic distance and shortest geodesic path between two points on a mesh}
+\title{Compute geodesic path between two points on a mesh}
 \usage{
-vcgGeodistPath(x, pt1, pt2)
+vcgGeodistPath(x, pt1, pt2, maxdist = 1e+06)
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d}}
@@ -12,12 +12,14 @@ vcgGeodistPath(x, pt1, pt2)
 \item{pt1}{3D coordinate on mesh or index of vertex}
 
 \item{pt2}{3D coordinate on mesh or index of vertex}
+
+\item{maxdist}{double, the maximal distance to travel along the mesh edges during distance computation}
 }
 \value{
-returns a list with two entries, first entry is the geodesic distance between \code{pt1} and \code{pt2} and second an integer vector representing the path.
+an integer vector representing the path.
 }
 \description{
-Compute pseudo-geodesic distance and shortest geodesic path between two points on a mesh
+Compute geodesic path between two points on a mesh
 }
 \note{
 Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices closest to these points.
@@ -26,5 +28,5 @@ Make sure to have a clean manifold mesh. Note that this computes the length of t
 data(humface)
 pt1 <- humface.lm[1,]
 pt2 <- humface.lm[5,]
-vcgGeodist(humface,pt1,pt2)
+vcgGeodistPath(humface,pt1,pt2)
 }
