@@ -55,7 +55,8 @@ vcgGeodist <- function(x,pt1,pt2) {
 #' @return list of integer vectors, representing the paths.
 #' @examples
 #' data(humface)
-#' vcgGeodesicPath(humface,1,c(5,10))
+#' p = vcgGeodesicPath(humface,1,c(5,10))
+#' p$paths[[1]]
 #' @export
 vcgGeodesicPath <- function(x, source, targets, maxdist=1e6) {
   vertpointer_source <- as.integer(source - 1L)
