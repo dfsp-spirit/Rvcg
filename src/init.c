@@ -114,7 +114,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"RuniformResampling",            (DL_FUNC) &RuniformResampling,             9},
     {"RupdateNormals",                (DL_FUNC) &RupdateNormals,                 5},
     {"RVFadj",                        (DL_FUNC) &RVFadj,                         2},
-    {"RVVadj",                        (DL_FUNC) &RVFadj,                         4},
+    {"RVVadj",                        (DL_FUNC) &RVVadj,                         4},
     {NULL, NULL, 0}
 };
 
