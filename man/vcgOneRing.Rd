@@ -4,13 +4,15 @@
 \alias{vcgOneRing}
 \title{Compute one-ring vertex neigbors of vertices.}
 \usage{
-vcgOneRing(x)
+vcgOneRing(x, vi = NULL, numstep = 1L)
 }
 \arguments{
 \item{x}{tmesh3d instance}
+
+\item{vi}{optional, vector of positive vertex indices for which to compute neighborhood, all are used if left at \code{NULL}.}
 }
 \value{
-list of integer vectors, the neighborhoods. Curently this function still returns FACE indices.
+list of integer vectors, the neighborhoods.
 }
 \description{
 Compute one-ring vertex neigbors of vertices.
