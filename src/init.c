@@ -23,6 +23,7 @@ extern SEXP Rclost(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP RCone(SEXP, SEXP, SEXP, SEXP);
 extern SEXP Rcurvature(SEXP, SEXP);
 extern SEXP Rdijkstra(SEXP, SEXP, SEXP);
+extern SEXP Rdijkstram(SEXP, SEXP, SEXP, SEXP);
 extern SEXP RDodecahedron(SEXP);
 extern SEXP RGeodesicPath(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP RgetEdge(SEXP, SEXP, SEXP);
@@ -73,6 +74,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"RCone",                         (DL_FUNC) &RCone,                          4},
     {"Rcurvature",                    (DL_FUNC) &Rcurvature,                     2},
     {"Rdijkstra",                     (DL_FUNC) &Rdijkstra,                      3},
+    {"Rdijkstram",                    (DL_FUNC) &Rdijkstram,                     4},
     {"RDodecahedron",                 (DL_FUNC) &RDodecahedron,                  1},
     {"RGeodesicPath",                 (DL_FUNC) &RGeodesicPath,                  5},
     {"RgetEdge",                      (DL_FUNC) &RgetEdge,                       3},

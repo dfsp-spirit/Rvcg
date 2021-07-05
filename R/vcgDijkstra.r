@@ -24,6 +24,32 @@ vcgDijkstra <- function(x, vertpointer) {
 }
 
 
+#' @title Compute pseudo-geodesic distances on a triangular mesh
+#' @param x triangular mesh of class \code{mesh3d}
+#' @param vertpointer integer: references indices of vertices on the mesh
+#' @param maxdist double, max idstance to travel along mesh
+#' @return returns a vector of shortest distances for each of the vertices to one of the vertices referenced in \code{vertpointer}
+#' @examples
+#' ## Compute geodesic distance between all mesh vertices and the first vertex of a mesh
+#' data(humface)
+#' humface <- vcgIsolated(vcgClean(humface,sel=0:6,iterate=TRUE))
+#' geo <- vcgDijkstra(humface,1)
+#' if (interactive()) {
+#' require(Morpho);require(rgl)
+#' meshDist(humface,distvec = geo)
+#' spheres3d(vert2points(humface)[1,],col=2)
+#' }
+#' @note Make sure to have a clean manifold mesh. Note that this computes the length of the pseudo-geodesic path (following the edges) between the two vertices.
+#' @export
+vcgDijkstram <- function(x, vertpointer, maxdist) {
+  vertpointer <- as.integer(vertpointer-1)
+  vb <- x$vb
+  it <- x$it-1
+  out <- .Call("Rdijkstram",vb,it,vertpointer, maxdist)
+  return(out)
+}
+
+
 #' @title Compute pseudo-geodesic distance between two points on a mesh
 #' @param x triangular mesh of class \code{mesh3d}
 #' @param pt1 3D coordinate on mesh or index of vertex
