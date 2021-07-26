@@ -32,7 +32,7 @@ pvd_smoothnn <- function(mesh, data, num_iter, k=1L) {
 
 
 #' @title Perform NN smoothing in given neighborhood.
-pvd_smoothnn_neigh <- function(mesh, data, num_iter, neighborhood) {
+pvd_smoothnn_neigh <- function(data, num_iter, neighborhood) {
   if(! (is.numeric(data) && is.vector(data))) {
     stop("Parameter 'data' must be a numeric vector.");
   }
@@ -42,14 +42,7 @@ pvd_smoothnn_neigh <- function(mesh, data, num_iter, neighborhood) {
     stop("Parameter 'num_iter' must be a scalar, positive integer.");
   }
 
-  k = as.integer(k);
-  if(length(k) != 1L || k < 1L) {
-    stop("Parameter 'k' must be a scalar, positive integer.");
-  }
-
-  vb <- mesh$vb;
-  it <- mesh$it - 1L;
-  smoothed <- .Call("Rpvd_smoothnn", vb, it, data, num_iter, neighborhood);
-  return(out);
+  smoothed <- .Call("Rpvd_smoothnn", data, num_iter, neighborhood);
+  return(smoothed);
 }
 
