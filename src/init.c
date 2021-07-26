@@ -56,6 +56,7 @@ extern SEXP RuniformResampling(SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, SEXP, S
 extern SEXP RupdateNormals(SEXP, SEXP, SEXP, SEXP, SEXP);
 extern SEXP RVFadj(SEXP, SEXP);
 extern SEXP RVVadj(SEXP, SEXP, SEXP, SEXP, SEXP);
+extern SEXP Rpvd_smoothnn(SEXP, SEXP, SEXP, SEXP);
 
 static const R_CMethodDef CEntries[] = {
     {"Rborder", (DL_FUNC) &Rborder, 6},
@@ -108,6 +109,7 @@ static const R_CallMethodDef CallEntries[] = {
     {"RupdateNormals",                (DL_FUNC) &RupdateNormals,                 5},
     {"RVFadj",                        (DL_FUNC) &RVFadj,                         2},
     {"RVVadj",                        (DL_FUNC) &RVVadj,                         5},
+    {"Rpvd_smoothnn",                 (DL_FUNC) &Rpvd_smoothnn,                  4},
     {NULL, NULL, 0}
 };
 
