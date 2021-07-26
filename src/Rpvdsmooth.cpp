@@ -17,10 +17,10 @@ RcppExport SEXP Rpvd_smoothnn(SEXP data_, SEXP num_iter_, SEXP neighborhood_)
     NumericVector source_data;
     float sum, cur_val;
     int neigh_size; // Size of considered neighbors, i.e., only those with non-NA values count.
-    for(int iter_idx=0; i<num_iter; i++) {
+    for(int iter_idx=0; iter_idx<num_iter; iter_idx++) {
       source_data = i == 0 ? data : smoothed;
       for(int vidx=0; vidx<data.length(); vidx++) {
-        if(NumericVector::is_na(source_data[j])) {
+        if(NumericVector::is_na(source_data[vidx])) {
           continue;
         } else {
           sum = 0.0f;
