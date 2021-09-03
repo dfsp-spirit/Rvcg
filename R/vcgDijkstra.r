@@ -96,6 +96,8 @@ vcgGeodesicPath <- function(x, source, targets, maxdist=1e6, method="R") {
 
 #' @title Geodesic path computation with pure R implementation of the backtracking algorithm.
 #'
+#' @description This is an \code{R} implementation of the geodesic path algorithm which is currently used instead of the \code{C++} version since the latter seems to cause a segfault when compiled with the \code{clang} compiler.
+#'
 #' @inheritParams vcgGeodesicPath
 #'
 #' @keywords internal
@@ -113,8 +115,7 @@ geodesic.path.R <- function(x, source, targets, maxdist = 1e6) {
       visited = c();
       while(current_vertex != source) {
         visited = c(visited, current_vertex);
-        #neigh = mesh.vertex.neighbors(x, source_vertices = current_vertex)$vertices;
-        neigh = Rvcg::vcgVVadj(x, current_vertex); # TODO: check this.
+        neigh = vcgVertexNeighbors(x, current_vertex);
         neigh_unvisited = neigh[which(!(neigh %in% visited))];
         neigh_source_dists = dists[neigh_unvisited];     # geodesic distance of neighbors to source vertex
         closest_to_source = neigh_unvisited[which.min(neigh_source_dists)]; # greedily jump to closest one
@@ -124,5 +125,6 @@ geodesic.path.R <- function(x, source, targets, maxdist = 1e6) {
       paths[[target_idx]] = rev(path);
     }
     return(paths);
-
 }
+
+

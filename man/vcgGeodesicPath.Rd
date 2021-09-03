@@ -4,7 +4,7 @@
 \alias{vcgGeodesicPath}
 \title{Compute geodesic path and path length between vertices on a mesh}
 \usage{
-vcgGeodesicPath(x, source, targets, maxdist = 1e+06)
+vcgGeodesicPath(x, source, targets, maxdist = 1e+06, method = "R")
 }
 \arguments{
 \item{x}{triangular mesh of class \code{mesh3d} from the \code{rgl} package.}
@@ -14,6 +14,8 @@ vcgGeodesicPath(x, source, targets, maxdist = 1e+06)
 \item{targets}{positive integer vector, the target vertex indices.}
 
 \item{maxdist}{numeric, the maximal distance to travel along the mesh edges during geodesic distance computation.}
+
+\item{method}{character string, one of "R" or "C++". The latter is experimental and should not be used in production code.}
 }
 \value{
 named list with two entries as follows. \code{'paths'}: list of integer vectors, representing the paths. \code{'geodist'}: double vector, the geodesic distances from the source vertex to all vertices in the graph.
