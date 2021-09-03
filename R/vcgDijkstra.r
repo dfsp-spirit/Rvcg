@@ -61,6 +61,7 @@ vcgGeodist <- function(x,pt1,pt2) {
 #' @param source scalar positive integer, the source vertex index.
 #' @param targets positive integer vector, the target vertex indices.
 #' @param maxdist numeric, the maximal distance to travel along the mesh edges during geodesic distance computation.
+#' @param method character string, one of "R" or "C++". The latter is experimental and should not be used in production code.
 #' @return named list with two entries as follows. \code{'paths'}: list of integer vectors, representing the paths. \code{'geodist'}: double vector, the geodesic distances from the source vertex to all vertices in the graph.
 #' @examples
 #' data(humface)
@@ -68,7 +69,10 @@ vcgGeodist <- function(x,pt1,pt2) {
 #' p$paths[[1]];   # The path 50..500
 #' p$geodist[500]; # Its path length.
 #' @export
-vcgGeodesicPath <- function(x, source, targets, maxdist=1e6) {
+vcgGeodesicPath <- function(x, source, targets, maxdist=1e6, method="R") {
+  if(!(method %in% c("R", "C++"))) {
+    stop("Parameter 'method' must be one of 'R' or 'C++'.");
+  }
   num_verts = ncol(x$vb);
   if(source < 1L || source > num_verts) {
     stop(sprintf("Parameter 'source' must be an integer in range %d to %d.\n", 1L, num_verts));
@@ -76,13 +80,49 @@ vcgGeodesicPath <- function(x, source, targets, maxdist=1e6) {
   if(any(targets < 1L) | any(targets > num_verts)) {
       stop(sprintf("All entries of parameter 'targets' must be integers in range %d to %d.\n", 1L, num_verts));
   }
-  vertpointer_source <- as.integer(source - 1L)
-  vertpointer_targets <- as.integer(targets - 1L)
-  vb <- x$vb
-  it <- x$it - 1L
-  out <- .Call("RGeodesicPath",vb,it,vertpointer_source,vertpointer_targets, maxdist)
-  return(out)
+
+  if(method == "R") {
+    return(geodesic.path.R(x, source, targets, maxdist));
+  } else {
+    vertpointer_source <- as.integer(source - 1L)
+    vertpointer_targets <- as.integer(targets - 1L)
+    vb <- x$vb
+    it <- x$it - 1L
+    out <- .Call("RGeodesicPath",vb,it,vertpointer_source,vertpointer_targets, maxdist)
+    return(out);
+  }
 }
 
 
+#' @title Geodesic path computation with pure R implementation of the backtracking algorithm.
+#'
+#' @inheritParams vcgGeodesicPath
+#'
+#' @keywords internal
+geodesic.path.R <- function(x, source, targets, maxdist = 1e6) {
 
+    if(length(source) != 1L) {
+      stop("Must give exactly 1 vertex index as parameter 'source'.");
+    }
+    dists = vcgDijkstra(x, source, maxdist = maxdist);
+    paths = list();
+    for(target_idx in seq_along(targets)) {
+      target_vertex = targets[target_idx]; # Backtracking part of Dijkstra algo to obtain the path from the dist map.
+      current_vertex = target_vertex;
+      path = current_vertex;
+      visited = c();
+      while(current_vertex != source) {
+        visited = c(visited, current_vertex);
+        #neigh = mesh.vertex.neighbors(x, source_vertices = current_vertex)$vertices;
+        neigh = Rvcg::vcgVVadj(x, current_vertex); # TODO: check this.
+        neigh_unvisited = neigh[which(!(neigh %in% visited))];
+        neigh_source_dists = dists[neigh_unvisited];     # geodesic distance of neighbors to source vertex
+        closest_to_source = neigh_unvisited[which.min(neigh_source_dists)]; # greedily jump to closest one
+        path = c(path, closest_to_source);
+        current_vertex = closest_to_source;
+      }
+      paths[[target_idx]] = rev(path);
+    }
+    return(paths);
+
+}
