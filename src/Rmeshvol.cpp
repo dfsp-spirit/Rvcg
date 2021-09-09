@@ -1,5 +1,5 @@
 // Author: Stefan Schlager
-// This is based on code from 
+// This is based on code from
 // of trimeshinfo
 // included in the vcglib sources
 // to work with R
@@ -18,7 +18,6 @@ RcppExport SEXP Rmeshvol(SEXP mesh_) {
     bool Watertight, Oriented = false;
     int VManifold, FManifold;
     float Volume = 0;
-    int numholes, BEdges = 0;
     //check manifoldness
     m.vert.EnableVFAdjacency();
     m.face.EnableFFAdjacency();
@@ -27,19 +26,19 @@ RcppExport SEXP Rmeshvol(SEXP mesh_) {
     UpdateTopology<MyMesh>::FaceFace(m);
     VManifold = Clean<MyMesh>::CountNonManifoldVertexFF(m);
     FManifold = Clean<MyMesh>::CountNonManifoldEdgeFF(m);
-    
+
     if ((VManifold>0) || (FManifold>0)) {
       ::Rf_error(
         (
           "Mesh is not manifold\n  Non-manifold vertices: " +
           std::to_string(VManifold) +"\n" +
-          "  Non-manifold edges: " + 
+          "  Non-manifold edges: " +
           std::to_string(FManifold) +"\n"
         ).c_str()
       );
     }
-      
-     
+
+
     Watertight = Clean<MyMesh>::IsWaterTight(m);
     Oriented = Clean<MyMesh>::IsCoherentlyOrientedMesh(m);
     tri::Inertia<MyMesh> mm(m);
