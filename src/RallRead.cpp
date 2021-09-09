@@ -1,6 +1,6 @@
 #include "typedef.h"
 
-#include <RcppArmadillo.h>  
+#include <RcppArmadillo.h>
 using namespace Rcpp;
 
 /// The following to helper functions are copied from filter_texture plugin of meshlab
@@ -22,7 +22,7 @@ bool CompareVertex(const MyMesh & m, const MyMesh::VertexType & vA, const MyMesh
 }
 ///////
 
-RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, SEXP clean_,SEXP silent_, SEXP type_) 
+RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, SEXP clean_,SEXP silent_, SEXP type_)
 {
   try {
     std::string str = Rcpp::as<std::string>(filename_);
@@ -32,7 +32,7 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
     bool clean = as<bool>(clean_);
     bool silent = as<bool>(silent_);
     int type = as<int>(type_);
-    MyMesh m; 
+    MyMesh m;
     bool hasNormal = false, WedgeTex=false, VertTex = false, hasQuality=false,hasFaceQuality=false;
     int mask0 = 0; //initializie import mask
     tri::io::Importer<MyMesh>::LoadMask(filename, mask0);
@@ -68,25 +68,24 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
       err2 = tri::io::ImporterOFF<MyMesh>::Open(m,filename,mask0);
     if (err2) {
       return wrap(1);
-    } else { 
+    } else {
       if (m.fn == 0) {
 	updateNormals = false;
 	clean = false;
       }
-      
-      
+
+
       // do texture processing
-      bool tex = false;
       std::vector<float> texvec;
       std::vector<string> texfile;
       if (m.textures.size() > 0 && colorread) {
 
 	if (!silent && clean)
 	  Rprintf("To avoid wrong assignment of texture, cleaning has been disabled\n");
-	
+
 	clean = false;
 	if (!VertTex && WedgeTex) {
-	  m.vert.EnableTexCoord();	
+	  m.vert.EnableTexCoord();
 	  tri::AttributeSeam::SplitVertex(m, ExtractVertex, CompareVertex);
 	  vcg::tri::Allocator< MyMesh >::CompactVertexVector(m);
 	  vcg::tri::Allocator< MyMesh >::CompactFaceVector(m);
@@ -100,7 +99,7 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
 	  vi++;
 	}
       }
-      
+
       if (clean) {
 	int dup = tri::Clean<MyMesh>::RemoveDuplicateVertex(m);
 	int dupface = tri::Clean<MyMesh>::RemoveDuplicateFace(m);
@@ -109,11 +108,11 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
 	vcg::tri::Allocator< MyMesh >::CompactFaceVector(m);
 	if ((dup > 0 || unref > 0 || dupface > 0) && !silent)
 	  Rprintf("Removed %i duplicate %i unreferenced vertices and %i duplicate faces\n",dup,unref,dupface);
-      }  
+      }
       //setup indices
       SimpleTempData<MyMesh::VertContainer,int> indices(m.vert);
       // setup output structures
-      NumericVector vb(3*m.vn);    
+      NumericVector vb(3*m.vn);
       std::vector<int> colvec;
       if (colorread && HasPerVertexColor(m)) {
 	colvec.resize(3*m.vn);
@@ -131,7 +130,7 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
       if (hasFaceQuality) {
 	facequality.resize(m.fn);
       }
-    
+
       if (updateNormals) { // update Normals
 	if (!hasNormal)
 	  //m.vert.EnableNormal();
@@ -181,10 +180,10 @@ RcppExport SEXP RallRead(SEXP filename_, SEXP updateNormals_, SEXP colorread_, S
 	  }
 	}
       }
-      
-     
-    
-      return List::create(Named("vb") = vb, 
+
+
+
+      return List::create(Named("vb") = vb,
 			  Named("it") = it,
 			  Named("normals") = normals,
 			  Named("colors") = colvec,
