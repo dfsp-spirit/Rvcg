@@ -47,7 +47,6 @@ RcppExport SEXP RVFadj(SEXP vb_, SEXP it_)
 // Compute the n-ring vertex neighborhood of the given vertices.
 RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_, SEXP include_self_)
 {
-  int i;
   int numstep = as<int>(numstep_);
   int include_self = as<int>(include_self_);
   IntegerVector query_vertices(query_vertices_);
@@ -58,7 +57,6 @@ RcppExport SEXP RVVadj(SEXP vb_, SEXP it_, SEXP query_vertices_, SEXP numstep_, 
 
   Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
   Rcpp::List outlist(m.vn);
-  typedef vcg::face::VFIterator<MyFace> VFIterator;
   tri::UpdateTopology<MyMesh>::FaceFace(m);
   tri::UpdateTopology<MyMesh>::VertexFace(m);
   FaceIterator fi;
