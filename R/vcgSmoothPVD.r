@@ -25,3 +25,10 @@ vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
   out <- .Call("RsmoothPVD",vb,it,data,fwhm,trunc_factor);
   return(out);
 }
+
+
+#lh = subject.surface(fsaverage.path(), "fsaverage3", hemi="lh");
+#pvd = subject.morph.native(fsaverage.path(), "fsaverage3", "thickness", hemi="lh");
+#vis.data.on.subject(fsaverage.path(), "fsaverage3", morph_data_lh = pvd);
+#smoothed_pvd = vcgSmoothPVD(fsbrain::fs.surface.to.tmesh3d(lh), pvd, fwhm=5.0);
+#vis.data.on.subject(fsaverage.path(), "fsaverage3", morph_data_lh = smoothed_pvd);
