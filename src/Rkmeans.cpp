@@ -11,7 +11,7 @@ List fastSubsetMeans(mat &x, uvec &inds, int k, int threads) {
 
     mat center(k,x.n_cols);
     vec checkempty(k);checkempty.fill(0);
-  
+
     center.fill(0);
 #pragma omp parallel for schedule(static) num_threads(threads)
     for (int i =0; i < k;i++) {
@@ -27,7 +27,7 @@ List fastSubsetMeans(mat &x, uvec &inds, int k, int threads) {
     }
     List out = List::create(Named("centers")=center,
 			    Named("checkempty")=checkempty);
-				
+
     return out;
   }  catch (std::exception& e) {
     ::Rf_error( e.what());
@@ -56,7 +56,7 @@ RcppExport SEXP Rkmeans(SEXP mesh_, SEXP k_, SEXP itermax_, SEXP threads_) {
     if (i < k)
       subset[i] = i;
   }
-  
+
   uvec shufflesample = shuffle(samplevec);
   uvec subset2 = shufflesample(subset);
   mat centers = coords.rows(subset2);
@@ -65,7 +65,7 @@ RcppExport SEXP Rkmeans(SEXP mesh_, SEXP k_, SEXP itermax_, SEXP threads_) {
   //set up kdtree search
   VertexConstDataWrapper<PcMesh> ww(mesh);
   uvec clostinds = samplevec;
-  
+
   while (count < itermax && centercheck != 0) {
     uvec clost_old = clostinds;
     PcMesh centermesh;
@@ -77,10 +77,9 @@ RcppExport SEXP Rkmeans(SEXP mesh_, SEXP k_, SEXP itermax_, SEXP threads_) {
 #pragma omp parallel for schedule(static) firstprivate(queue, kdtree) num_threads(threads)
     for (int i = 0; i < mesh.vn; i++) {
       kdtree.doQueryK(mesh.vert[i].cP(), 1, queue);
-      int neighbours = queue.getNofElements();
       clostinds[i] = queue.getIndex(0);
     }
-    
+
     List subsetmeans = fastSubsetMeans(coords,clostinds,k,threads);
     centers = as<mat>(subsetmeans["centers"]);
     vec checkempty = as<vec>(subsetmeans["checkempty"]);
@@ -94,7 +93,7 @@ RcppExport SEXP Rkmeans(SEXP mesh_, SEXP k_, SEXP itermax_, SEXP threads_) {
       }
     centercheck = arma::max(arma::abs(clostinds-clost_old));
     count += 1;
-    
+
   }
   //clostinds -= 1;
   return List::create(Named("centers") = centers,
