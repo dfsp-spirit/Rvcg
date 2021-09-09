@@ -2,6 +2,28 @@
 \title{News for Package Rvcg}
 \newcommand{\cpkg}{\href{http://CRAN.R-project.org/package=#1}{\pkg{#1}}}
 
+
+\section{Changes in Rvcg version 0.20.1 (2021-09-01)}{
+  \subsection{bug fixed}{
+    \itemize{
+      \item vcgGeodist: fixed bug in C++ code leading to segfaults using clang
+     
+    }
+  }
+}
+
+\section{Changes in Rvcg version 0.20 (2021-09-01)}{
+  \subsection{new features}{
+    \itemize{
+      \item NEW: vcgIsotropicRemeshing: remesh to obtain uniform edge lengths
+      \item NEW: vcgGeodist vcgGeodistPath: get geodesic paths on meshes
+      \item NEW: vcgVertxNeighbours: find neighbourhood of vertices
+      \item NEW: vcgFaceNormals: compute per face normals of a mesh
+    }
+  }
+}
+
+
 \section{Changes in Rvcg version 0.19.2 (2020-12-10)}{
   \subsection{small changes and fixes}{
     \itemize{
