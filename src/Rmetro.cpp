@@ -43,7 +43,7 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
       SamplingFlags::FACE_SAMPLING |
       //SamplingFlags::SIMILAR_SAMPLING |
       SamplingFlags::HIST;
-      
+
 
     if (silent) flags |= SamplingFlags::SILENT;
     if (!vertSamp) flags &= ~SamplingFlags::VERTEX_SAMPLING;
@@ -57,27 +57,27 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
     case 2 : flags |=  SamplingFlags::SIMILAR_SAMPLING ; break;
       //case 3 : flags |=  SamplingFlags::NO_SAMPLING ; break;
      default : ::Rf_error("%s\n","samplingType unknown" );
-      
+
     }
 
     if (nSamples != 0) NumberOfSamples = true; n_samples_target = nSamples;
     if (nSamplesArea != 0 ) SamplesPerAreaUnit = true; n_samples_per_area_unit = nSamplesArea;
     flags |= SamplingFlags::SAVE_ERROR;
 
-   
+
     switch(searchStruct){
     case 0 : flags |= SamplingFlags::USE_AABB_TREE; break;
     case 1 : flags |= SamplingFlags::USE_STATIC_GRID; break;
     case 2 : flags |= SamplingFlags::USE_HASH_GRID; break;
     case 3 : flags |= SamplingFlags::USE_OCTREE; break;
       //default : ::Rf_error("%s\n","searchStruct unknown" );
-     
+
     }
 
     if(!(flags & SamplingFlags::USE_HASH_GRID) && !(flags & SamplingFlags::USE_AABB_TREE) && !(flags & SamplingFlags::USE_OCTREE)){
       flags |= SamplingFlags::USE_STATIC_GRID;
     }
-		
+
     if(!NumberOfSamples && !SamplesPerAreaUnit){
       NumberOfSamples = true;
       n_samples_target = 10 * max(m0.fn,m1.fn);
@@ -157,7 +157,7 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
     // write back color information
     std::vector<int> colvec0(3*m0.vn),colvec1(3*m1.vn);
     std::vector<float> quality0(m0.vn), quality1(m1.vn);
-    
+
     VertexIterator vi=m0.vert.begin();
     for (int i=0;  i < m0.vn; i++) {
       colvec0[i*3] = (*vi).C()[0];
@@ -174,21 +174,19 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
       quality1[i] = (*vi).Q();
       ++vi;
     }
-    
+
     List mesh0 = Rvcg::IOMesh<CMeshMetro>::RvcgToR(m0);
     //mesh0["quality"] = quality0;
     List mesh1 = Rvcg::IOMesh<CMeshMetro>::RvcgToR(m1);
     //mesh1["quality"] = quality1;
     // save error files.
-		
+
     // create sampling histogram as R matrices
     Histogram<double> fwdhist = ForwardSampling.GetHist();
     int nfwd = fwdhist.BinNum();
     double fwdcnt = fwdhist.Cnt();
     NumericMatrix forward_hist(nfwd+2,2);
     for (int i = 0; i <= nfwd+1; i++) {
-      double lbi = fwdhist.BinLowerBound(i);
-      double hi = fwdhist.BinCountInd(i)/fwdcnt;
       forward_hist(i,0) = fwdhist.BinLowerBound(i);
       forward_hist(i,1) = fwdhist.BinCountInd(i)/fwdcnt;
     }
@@ -197,14 +195,11 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
     double bckcnt = bckhist.Cnt();
     NumericMatrix backward_hist(nbck+2,2);
     for (int i = 0; i <= nbck+1; i++) {
-      double lbi = bckhist.BinLowerBound(i);
-      double hi = bckhist.BinCountInd(i)/bckcnt;
       backward_hist(i,0) = bckhist.BinLowerBound(i);
       backward_hist(i,1) = bckhist.BinCountInd(i)/bckcnt;
     }
-		    
-		  
-		
+
+
     Rcpp::List out;
     out["ForwardSampling"] = Rcpp::List::create(
 						Rcpp::Named("maxdist") = dist0_max,
@@ -238,8 +233,8 @@ RcppExport SEXP Rmetro( SEXP mesh0_, SEXP mesh1_, SEXP vertSamp_, SEXP edgeSamp_
 				      Rcpp::Named("colors") = colvec1
 				      );
     }
-    
-    
+
+
     return out;
   }
   catch (std::exception& e) {
