@@ -27,8 +27,14 @@ vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
 }
 
 
-#lh = subject.surface(fsaverage.path(), "fsaverage3", hemi="lh");
-#pvd = subject.morph.native(fsaverage.path(), "fsaverage3", "thickness", hemi="lh");
-#vis.data.on.subject(fsaverage.path(), "fsaverage3", morph_data_lh = pvd);
-#smoothed_pvd = vcgSmoothPVD(fsbrain::fs.surface.to.tmesh3d(lh), pvd, fwhm=5.0);
-#vis.data.on.subject(fsaverage.path(), "fsaverage3", morph_data_lh = smoothed_pvd);
+
+#test_with_brainmesh <- function() {
+#  fsbrain::download_fsaverage3();
+#  sjd = fsbrain::fsaverage.path(T);
+#  lh = fsbrain::subject.surface(sjd, "fsaverage3", hemi="lh");
+#  pvd = fsbrain::subject.morph.native(sjd, "fsaverage3", "thickness", hemi="lh");
+#  fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = pvd);
+#  smoothed_pvd = vcgSmoothPVD(fsbrain::fs.surface.to.tmesh3d(lh), pvd, fwhm=5.0);
+#  fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = smoothed_pvd);
+#}
+
