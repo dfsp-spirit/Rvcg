@@ -8,7 +8,7 @@
 #'
 #' @param fwhm scalar double smoothing kernel full width at half max
 #'
-#' @param trunc_factor scalar double, truncation factor for Gaussian neighborhood
+#' @param trunc_factor scalar double, truncation factor for Gaussian neighborhood, in Gaussian standard deviations.
 #'
 #' @return numeric vector, the smoothed data
 #'
