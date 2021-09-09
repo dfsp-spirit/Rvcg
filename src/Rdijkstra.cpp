@@ -6,8 +6,6 @@
 using namespace tri;
 using namespace Rcpp;
 
-// [[Rcpp::interfaces(r, cpp)]]
-
 
 void hello() {
   Rcpp::Rcout << "Hello!\n";
@@ -16,7 +14,6 @@ void hello() {
 /// Compute pseudo-geodesic distance from source vertex (or vertices) to all other vertices.
 /// Sums Euclidean distance along mesh edges.
 /// Returns the distances from the vertex/vertices to all others.
-// [[Rcpp::export]]
 std::vector<float> dijkstra(MyMesh& m, std::vector<int> verts, float maxdist) {
   int n = verts.size();
   VertexIterator vi;
