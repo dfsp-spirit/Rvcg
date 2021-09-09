@@ -55,12 +55,25 @@ std::vector<std::vector<float> > gauss_weights(const std::vector<std::vector<int
 std::vector<float> spatial_filter(const std::vector<float> data, const std::vector<std::vector<int> > geod_neigh_indices, const std::vector<std::vector<float> > geod_neigh_gauss_weights) {
   std::vector<float> smoothed_data(data.size());
   float smoothed_val;
+  int num_non_nan_neighbors;
   for(size_t i=0; i<data.size(); i++) {
+    if(std::isnan(data[i])) {
+      smoothed_data[i] = NAN;
+      continue;
+    }
     smoothed_val = 0.0;
+    num_non_nan_neighbors = 0;
     for(size_t j=0; j<geod_neigh_indices[i].size(); j++) {
+      if(std::isnan(data[geod_neigh_indices[i][j]])) {
+        continue;
+      }
       smoothed_val += data[geod_neigh_indices[i][j]] * geod_neigh_gauss_weights[i][j];
+      num_non_nan_neighbors++;
     }
     smoothed_data[i] = smoothed_val;
+    if(num_non_nan_neighbors == 0) {
+      smoothed_data[i] = NAN;
+    }
   }
   return(smoothed_data);
 }
