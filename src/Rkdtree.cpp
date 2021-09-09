@@ -16,11 +16,10 @@ RcppExport SEXP Rkdtree(SEXP vb0_, SEXP vb1_, SEXP k_ ,SEXP nofP_= wrap(16),SEXP
     int threads = as<int>(threads_);
     unsigned int nofP = as<unsigned int >(nofP_);
     unsigned int mDepth = as<unsigned int >(mDepth_);
-    typedef pair<float,int> mypair;
     PcMesh target, query;
-    Rvcg::IOMesh<PcMesh>::RvcgReadR(target, vb0_);  
+    Rvcg::IOMesh<PcMesh>::RvcgReadR(target, vb0_);
     Rvcg::IOMesh<PcMesh>::RvcgReadR(query, vb1_);
- 
+
     List out = Rvcg::KDtree< PcMesh, PcMesh >::KDtreeIO(target, query, k,nofP, mDepth,threads);
     return out;
   } catch (std::exception& e) {
@@ -28,7 +27,7 @@ RcppExport SEXP Rkdtree(SEXP vb0_, SEXP vb1_, SEXP k_ ,SEXP nofP_= wrap(16),SEXP
   } catch (...) {
     ::Rf_error("unknown exception");
   }
-  
+
 }
 
 RcppExport SEXP RclosestKD(SEXP target_, SEXP query_, SEXP k_, SEXP sign_, SEXP smooth_, SEXP barycentric_, SEXP borderchk_, SEXP nofP_= wrap(16),SEXP mDepth_= wrap(64),SEXP angdev_=wrap(0), SEXP wnorm_=wrap(true), SEXP facenormals_ = wrap(true), SEXP threads_=wrap(1)) {
@@ -68,7 +67,7 @@ RcppExport SEXP RclosestKD(SEXP target_, SEXP query_, SEXP k_, SEXP sign_, SEXP 
     arma::imat closest_indices = as<arma::imat>(indices["index"]);
     List out = Rvcg::KDtree<MyMesh,MyMesh>::clostKD(target, query, closest_indices, k,angdev, facenormals,sign, wnorm,borderchk,barycentric ,threads);
     return out;
-      
+
   } catch (std::exception& e) {
     ::Rf_error( e.what());
     return wrap(1);
