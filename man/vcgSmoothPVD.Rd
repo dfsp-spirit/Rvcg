@@ -2,20 +2,28 @@
 % Please edit documentation in R/vcgSmoothPVD.r
 \name{vcgSmoothPVD}
 \alias{vcgSmoothPVD}
-\title{Smooth per-vertex data on mesh.}
+\title{Smooth per-vertex data on a mesh.}
 \usage{
 vcgSmoothPVD(x, data, fwhm, trunc_factor = 3.5)
 }
 \arguments{
-\item{data}{numeric vector, one value per vertex}
+\item{x}{tmesh instance, the source mesh.}
+
+\item{data}{numeric vector, one value per mesh vertex.}
 
 \item{fwhm}{scalar double smoothing kernel full width at half max}
 
-\item{trunc_factor}{scalar double, truncation factor for Gaussian neighborhood}
+\item{trunc_factor}{scalar double, truncation factor for Gaussian neighborhood, in Gaussian standard deviations.}
 }
 \value{
 numeric vector, the smoothed data
 }
 \description{
-Smooth per-vertex data on mesh.
+Smooth per-vertex data on a mesh.
+}
+\examples{
+data(humface)
+pvd = rnorm(ncol(humface$vb), mean = 5.0, sd = 1.0);
+smoothed_pvd = vcgSmoothPVD(humface, pvd, fwhm=5.0);
+
 }

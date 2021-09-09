@@ -13,7 +13,7 @@ using namespace Rcpp;
 //#include <iostream>
 
 
-std::vector<float> dijkstra(MyMesh& m, std::vector<int> verts, float maxdist);
+std::vector<float> dijkstra(MyMesh& m, std::vector<int> verts, float maxdist); // declaration for function from Rdijkstra.cpp
 
 /// Used in C++ code only, not exported.
 inline float fhwm_to_gstd(const float fwhm) {
@@ -66,20 +66,24 @@ std::vector<float> spatial_filter(const std::vector<float> data, const std::vect
 }
 
 
-/// Perform nearest-neighbor smoothing of the given data, based on mesh adjacency list representation.
-/// @param _mesh the input mesh
-/// @param _data an R numerical vector with one value per mesh vertex
-/// @param _fwhm the FWHM for the Gaussian kernel
-/// @param _truncfactor the cutoff factor after which to end the Gaussian neighborhood, in Gaussian standard deviations
+/// Perform Gaussian smoothing of the given per-vertex data for the mesh.
+/// @param vb_ the xyz vertex coordinates of the mesh
+/// @param it_ the faces of the mesh, given as indices into the vertex list
+/// @param data_ an R numerical vector with one value per mesh vertex
+/// @param fwhm_ the FWHM for the Gaussian kernel
+/// @param truncfactor_ the cutoff factor after which to end the Gaussian neighborhood, in Gaussian standard deviations
 /// NOTE: This currently computes the full mesh neighborhood distances at once, which may result in out-of-memory issues for large meshes.
-RcppExport SEXP RsmoothPVD(SEXP vb_, SEXP it_, SEXP _data, SEXP _fwhm, SEXP _truncfactor) {
-  float fwhm = Rcpp::as<float>(_fwhm);
+/// NOTE2: This function currently does not support NA values in the data.
+RcppExport SEXP RsmoothPVD(SEXP vb_, SEXP it_, SEXP data_, SEXP fwhm_, SEXP truncfactor_) {
+  float fwhm = Rcpp::as<float>(fwhm_);
   float gstd = fhwm_to_gstd(fwhm);
-  float maxdist = gstd * Rcpp::as<float>(_truncfactor);
-  std::vector<float> data = Rcpp::as<std::vector<float>>(_data);
+  float maxdist = gstd * Rcpp::as<float>(truncfactor_);
+  std::vector<float> data = Rcpp::as<std::vector<float>>(data_);
 
   MyMesh m;
   Rvcg::IOMesh<MyMesh>::RvcgReadR(m,vb_,it_);
+
+  assert(m.vn == data.size());
 
   std::vector<std::vector<int> > geod_indices;
   std::vector<std::vector<float> > geod_distances;

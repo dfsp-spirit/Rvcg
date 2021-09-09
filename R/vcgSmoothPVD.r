@@ -1,10 +1,10 @@
 
 
-#' @title Smooth per-vertex data on mesh.
+#' @title Smooth per-vertex data on a mesh.
 #'
 #' @param x tmesh instance, the source mesh.
 #'
-#' @param data numeric vector, one value per vertex
+#' @param data numeric vector, one value per mesh vertex.
 #'
 #' @param fwhm scalar double smoothing kernel full width at half max
 #'
@@ -19,6 +19,24 @@
 #'
 #' @export
 vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
+
+  if(! is.vector(data)) {
+    stop("Parameter 'data' must be a numeric vector.");
+  }
+
+  if(length(data) != ncol(x$vb)) {
+    stop("Length of 'data' must match mesh 'x' vertex count.");
+  }
+
+  if(! is.numeric(fwhm)) {
+    stop("Parameter 'fwhm' must be a scalar numeric value.");
+  }
+  if(! is.numeric(trunc_factor)) {
+    stop("Parameter 'trunc_factor' must be a scalar numeric value.");
+  }
+  if(trunc_factor <= 0.0) {
+    stop("Parameter 'trunc_factor' must be positive.");
+  }
 
   vb <- x$vb;
   it <- x$it - 1L;
