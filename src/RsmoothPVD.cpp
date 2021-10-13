@@ -80,13 +80,15 @@ std::vector<float> spatial_filter(const std::vector<float> data, const std::vect
 
 
 /// Perform Gaussian smoothing of the given per-vertex data for the mesh.
-/// @param vb_ the xyz vertex coordinates of the mesh
-/// @param it_ the faces of the mesh, given as indices into the vertex list
-/// @param data_ an R numerical vector with one value per mesh vertex
-/// @param fwhm_ the FWHM for the Gaussian kernel
-/// @param truncfactor_ the cutoff factor after which to end the Gaussian neighborhood, in Gaussian standard deviations
-/// NOTE: This currently computes the full mesh neighborhood distances at once, which may result in out-of-memory issues for large meshes.
-/// NOTE2: This function currently does not support NA values in the data.
+/// @param vb_ The xyz vertex coordinates of the mesh.
+/// @param it_ The faces of the mesh, given as indices into the vertex list.
+/// @param data_ An R numerical vector with one value per mesh vertex.
+/// @param fwhm_ The FWHM for the Gaussian kernel.
+/// @param truncfactor_ The cutoff factor after which to end the Gaussian neighborhood, in
+///                     Gaussian standard deviations.
+/// NOTE: This currently computes the full mesh neighborhood vertices and distances at once,
+///       which requires a lot of memory for large meshes in combination with
+///       high fwhm_ values.
 RcppExport SEXP RsmoothPVD(SEXP vb_, SEXP it_, SEXP data_, SEXP fwhm_, SEXP truncfactor_) {
   float fwhm = Rcpp::as<float>(fwhm_);
   float gstd = fhwm_to_gstd(fwhm);
@@ -123,4 +125,3 @@ RcppExport SEXP RsmoothPVD(SEXP vb_, SEXP it_, SEXP data_, SEXP fwhm_, SEXP trun
   std::vector<float> smoothed_data = spatial_filter(data, geod_indices, gaussian_weights);
   return wrap(smoothed_data);
 }
-
