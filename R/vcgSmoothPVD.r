@@ -40,6 +40,12 @@ vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
   if(fwhm <= 0.0) {
     stop("Parameter 'fwhm' must be positive.");
   }
+  if(! is.matrix(x$it)) {
+    stop("Parameter 'x' must be a valid tmesh with vertex indices of faces in 'x$it'.");
+  }
+  if(! is.matrix(x$vb)) {
+    stop("Parameter 'x' must be a valid tmesh with vertex coordinates in 'x$vb'.");
+  }
 
   vb <- x$vb;
   it <- x$it - 1L;
