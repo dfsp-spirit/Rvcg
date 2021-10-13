@@ -37,6 +37,9 @@ vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
   if(trunc_factor <= 0.0) {
     stop("Parameter 'trunc_factor' must be positive.");
   }
+  if(fwhm <= 0.0) {
+    stop("Parameter 'fwhm' must be positive.");
+  }
 
   vb <- x$vb;
   it <- x$it - 1L;
@@ -46,13 +49,21 @@ vcgSmoothPVD <- function(x, data, fwhm, trunc_factor=3.5) {
 
 
 
-#test_with_brainmesh <- function() {
-#  fsbrain::download_fsaverage3();
-#  sjd = fsbrain::fsaverage.path(T);
-#  lh = fsbrain::subject.surface(sjd, "fsaverage3", hemi="lh");
-#  pvd = fsbrain::subject.morph.native(sjd, "fsaverage3", "thickness", hemi="lh");
-#  fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = pvd);
-#  smoothed_pvd = vcgSmoothPVD(fsbrain::fs.surface.to.tmesh3d(lh), pvd, fwhm=5.0);
-#  fsbrain::vis.data.on.subject(sjd, "fsaverage3", morph_data_lh = smoothed_pvd);
-#}
+#' @title Internal testing function, do not use.
+#'
+#' @note This is NOT part of the API and may disappear/change at any time without notice, do NOT call this in your client code.
+#'
+#' @keywords internal
+internal_test_with_brainmesh <- function() {
+  warning("internal_test_with_brainmesh: This is NOT part of the API and may disappear/change at any time without notice, do NOT call this in your client code.");
+  sj = "fsaverage5";
+  #fsbrain::download_fsaverage3(T);
+  sjd = fsbrain::fsaverage.path(T);
+  lh = fsbrain::subject.surface(sjd, sj, hemi="lh");
+  pvd = fsbrain::subject.morph.native(sjd, sj, "thickness", hemi="lh");
+  fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = pvd);
+  smoothed_pvd = Rvcg::vcgSmoothPVD(fsbrain::fs.surface.to.tmesh3d(lh), pvd, fwhm=5.0);
+  fsbrain::vis.data.on.subject(sjd, sj, morph_data_lh = smoothed_pvd);
+}
+
 
