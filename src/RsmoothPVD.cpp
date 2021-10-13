@@ -49,6 +49,13 @@ std::vector<std::vector<float> > gauss_weights(const std::vector<std::vector<int
   return(weights);
 }
 
+// TODO: implement this, it is just a copied stub atm
+//RcppExport SEXP RgaussWeights(SEXP vb_, SEXP it_, SEXP data_, SEXP fwhm_, SEXP truncfactor_) {
+  //float fwhm = Rcpp::as<float>(fwhm_);
+  //  float gstd = fhwm_to_gstd(fwhm);
+  //  float maxdist = gstd * Rcpp::as<float>(truncfactor_);
+  //  std::vector<float> data = Rcpp::as<std::vector<float>>(data_);
+//}
 
 // Apply Gaussian weights to neighborhood data values to smooth data.
 /// Used in C++ code only, not exported.
